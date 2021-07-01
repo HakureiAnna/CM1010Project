@@ -28,3 +28,7 @@ function getRadioButtonValue(name) {
 function getDropdownValue(id) {
     return document.getElementById('drp' + id).value;
 }
+
+function getCheckboxValue(id) {
+    return document.getElementById('chk' + id).checked;
+}

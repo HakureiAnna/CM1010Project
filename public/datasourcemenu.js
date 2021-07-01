@@ -15,35 +15,7 @@ function DataSourceMenu(parent, menuId) {
                     value: 'internal'
                 }
             ]
-        },
-        {
-            type: 'textBox',
-            id: 'Path',
-            label: 'Path:'
-        },
-        {
-            type: 'button',
-            id: 'GetData',
-            text: 'Get Data',
-            handlers: [
-                {
-                    type: 'click',
-                    handler: function() {
-                        var sourceType = getRadioButtonValue(menuId + 'SourceType');
-                        if (sourceType == null) {
-                            parent.infoBar.warn('Please choose a source type and retry.');
-                            return;
-                        }
-                        var uri = '';
-                        if (sourceType == 'external') {
-                            uri = 'load?uri=';
-                        }
-                        uri += getTextBoxValue(menuId + 'Path');
-                        parent.loadData(uri);
-                    }
-                }
-            ]
-        },
+        },,
         {
             type: 'radioButtons',
             label: 'Data Orientation:',
@@ -57,6 +29,57 @@ function DataSourceMenu(parent, menuId) {
                 {
                     label: 'Row',
                     value: 'row'
+                },
+            ]
+        },
+        {
+            type: 'checkbox',
+            id: 'WithHeaders',
+            label: 'With Headers'
+        },
+        {
+            type: 'textBox',
+            id: 'Path',
+            label: 'Path:'
+        },
+        {
+            type: 'button',
+            id: 'GetData',
+            text: 'Get Data',
+            handlers: [
+                {
+                    type: 'click',
+                    target: 'btn' + menuId + 'GetData',
+                    handler: function() {
+                        var sourceType = getRadioButtonValue(menuId + 'SourceType');
+                        if (sourceType == null) {
+                            parent.infoBar.warn('Please choose a source type and retry.');
+                            return;
+                        }
+
+                        var orientation = getRadioButtonValue(menuId + 'DataOrientation');
+                        if (orientation == null) {
+                            parent.infoBar.warn('Please choose a data orientation and retry.');
+                            return;
+                        }
+
+                        var withHeaders = getCheckboxValue(menuId + 'WithHeaders');
+
+                        var tmp = getTextBoxValue(menuId + 'Path');
+                        if (tmp == '') {
+                            parent.infoBar.warn('Please enter a data source and retry.');
+                            return;
+                        }
+                        var uri = '';
+                        if (sourceType == 'external') {
+                            uri = 'load?uri=';
+                        }
+                        uri += tmp;
+
+                        parent.loadData(uri, orientation, withHeaders);
+                        parent.plotSettingsMenu.reset();        
+                        parent.dataSeriesMenu.reset();                
+                    }
                 },
             ]
         }

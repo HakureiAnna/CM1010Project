@@ -12,11 +12,12 @@ function setup() {
 
   dataVisualizer.setPlotWindow (PlotWindow(dataVisualizer, 'PlotWindow'));
 
-  dataVisualizer.addPlot(XYPlot());
+  dataVisualizer.addPlot(XYPlot(dataVisualizer, 'GraphSettingsMenu'));
 
 
   dataVisualizer.dataSourceMenu = DataSourceMenu(dataVisualizer, 'DataSourceMenu');
-  dataVisualizer.plotSettingsMenu =PlotSettingsMenu(dataVisualizer, 'GraphSettingsMenu');
+  dataVisualizer.plotSettingsMenu = PlotSettingsMenu(dataVisualizer, 'GraphSettingsMenu');
+  dataVisualizer.dataSeriesMenu = DataSeriesMenu(dataVisualizer, 'DataSeriesMenu');
 
   dataVisualizer.setup();
 

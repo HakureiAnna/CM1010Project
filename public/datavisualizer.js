@@ -1,6 +1,29 @@
 function DataVisualizer() {
     var self = null;
 
+    /*
+        if data is loaded by rows, choosable data series will either have
+        first row header or column number as name
+     */
+    var loadRows = function(data) {
+        if (self.withHeaders) {
+            self.data = data.columns;
+            return;
+        }
+        // no header NOT IMPLEMENTED YET
+    };
+    
+    /*
+        if data is loaded by columns, choosable data series will either have
+        first column header or row number as names
+        NOT IMPLEMENTED YET
+     */
+    var loadColumns = function(data) {
+        if (withHeaders) {
+            
+        }
+    };
+
     return {
         sideBars: {},
         plotWindow: null,
@@ -8,11 +31,14 @@ function DataVisualizer() {
         dataSeriesMenu: null,
         plotSettingsMenu: null,
         plots: {},
-        data: null,
+        data: [],
         dataSeries: [],
         plot: null,
         toolBar: null,
         infoBar: null,
+        withHeaders: false,
+        rowOrColumn: null,
+        currentPlot: '',
         /*
             initialization function
         */
@@ -83,13 +109,26 @@ function DataVisualizer() {
             this.sideBars.top.resize();
             this.sideBars.bottom.resize();
         },
-        loadData: function(uri) {
-            console.log('\'', uri, '\'');
-            self.data = loadTable(uri, 'header', this.dataLoaded, this.dataLoadError);
+        loadData: function(uri, rowOrColumn, withHeaders) {
+            self.rowOrColumn = rowOrColumn;
+            self.withHeaders = withHeaders;
+
+            loadTable(uri, withHeaders?'header':'', this.dataLoaded, this.dataLoadError);            
         },
-        dataLoaded: function() {
-            if (self.data.rows.length == 0) {
-                self.infoBar.error('No data retrieved. Please try another data source.')
+        dataLoaded: function(data) {
+            if (data.rows.length == 0) {
+                self.infoBar.error('No data retrieved. Please try another data source.');
+                return;
+            }
+
+            self.rowOrColumn == 'row'? loadRows(data): loadColumns(data);
+
+            for (var p in self.plots) {
+                self.plots[p].updateData();
+            }
+
+            if (parent.currentPlot != undefined) {
+                self.plots[self.currentPlot].dataSet();
             }
         },
         dataLoadError: function() {

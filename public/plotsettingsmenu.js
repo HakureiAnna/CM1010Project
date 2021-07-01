@@ -33,15 +33,29 @@ function PlotSettingsMenu(parent, menuId) {
             handlers: [
                 {
                     type: 'change',
+                    target: 'drp' + menuId + 'Plot',
                     handler: function() {
                         var selection = getDropdownValue(menuId+ 'Plot');
                         resetSettings();
+                        if (selection == 'Select graph type') {
+                            return;
+                        }
+                        parent.currentPlot = selection;
                         loadSettings(selection);
+                        parent.plots[parent.currentPlot].dataSet();
+                          
+                        parent.dataSeriesMenu.reset();       
                     }
                 }
             ]
         },
     ]);
+
+    menu.reset = function() {
+        var dropdown = document.getElementById('drp' + menuId + 'Plot');
+        dropdown.value = 'Select graph type';
+        resetSettings();
+    };
     
     return menu;
 }

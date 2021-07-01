@@ -1,6 +1,16 @@
-function XYPlot() {
-    var xAxisOptions = [];
-    return Plot('XY Plot',
+function XYPlot(parent, menuId) {
+    var typeOptions = [
+        {
+            value: 'line',
+            text: 'Line',
+        }
+    ];
+    var xAxisOptions = [];    
+    var self = this;
+
+    return Plot(
+        parent,
+        'XY Plot',
         // settings
         [
             {
@@ -10,9 +20,6 @@ function XYPlot() {
                 default: 'Select data series for x-axis',
                 options: xAxisOptions,
                 handlers: [
-                    {
-
-                    }
                 ]                
             },
             {
@@ -23,29 +30,27 @@ function XYPlot() {
         ],
         // data series template
         [
-
+            {
+                type: 'dropDown',
+                label: 'Data Series:',
+                id: 'DataSeries',
+                default: 'Select Data Series',
+                options: null,
+            },
+            {
+                type: 'dropDown',
+                label: 'Type:',
+                id: 'Type',
+                default: 'Select Type',
+                options: typeOptions,
+            },
         ],
         // plot
         function() {
 
+        },
+        // dataSet
+        function() {
+            ComponentGenerator.modifyDropdown(menuId + 'XAxisDataSeries', parent.data, 1);
         });
 }
-
-/*
-
-            type: 'dropDown',
-            label: 'Graph Type:',
-            id: 'Plot',
-            default: 'Select graph type',
-            options: options,
-            handlers: [
-                {
-                    type: 'change',
-                    handler: function() {
-                        var selection = getDropdownValue(menuId+ 'Plot');
-                        resetSettings();
-                        loadSettings(selection);
-                    }
-                }
-            ]
-*/

@@ -19,16 +19,20 @@ var ComponentGenerator = {
             case 'checkbox':
                 comp = this.generateCheckbox(prefix + component.id, component.label);
                 break;
+            case 'counter':
+                comp = this.generateCounter(prefix + component.id, component.label);
+                break;
         }
 
         if (component.handlers != undefined) {
             component.handlers.forEach(handler => {
+                var element = comp.children[handler.target];
                 switch (handler.type) {
                     case 'click':
-                        comp.onclick = handler.handler;
+                        element.onclick = handler.handler;
                         break;
                     case 'change':
-                        comp.onchange = handler.handler;
+                        element.onchange = handler.handler;                        
                         break;
                 }
             });
@@ -93,9 +97,10 @@ var ComponentGenerator = {
     },
     generateButton: function(id, text) {
         var container = this.generateDiv();
-
+        
         var button = document.createElement('button');
-        button.className = 'btn btn-primary';
+        button.className = 'btn btn-primary btn-sm btn-block';
+        button.style = "width: 100%;";
         button.innerHTML = text;
         button.id = 'btn' + id;
         container.appendChild(button);
@@ -138,13 +143,96 @@ var ComponentGenerator = {
         defaultOption.innerHTML = prompt;
         select.appendChild(defaultOption);
 
-        for (var i=0; i<options.length; ++i) {
-            var option = document.createElement('option');
-            option.value = options[i].value;
-            option.innerHTML = options[i].text;
-            select.appendChild(option)
+        if (options != undefined) {
+            for (var i=0; i<options.length; ++i) {
+                var option = document.createElement('option');
+                option.value = options[i].value;
+                option.innerHTML = options[i].text;
+                select.appendChild(option)
+            }
         }
 
         return container;
+    },    
+    generateCounter: function(id, label) {
+        var container = this.generateDiv();
+        container.className = 'input-group input-group-sm';
+
+        var counterId = 'txt' + id;
+        var titleLabel = this.generateLabel(label, counterId);
+        titleLabel.className = 'form-control';
+        container.appendChild(titleLabel);
+
+        var textBox = document.createElement('input');
+        textBox.className = 'form-control';
+        textBox.id = counterId;
+        textBox.type = 'text';
+        textBox.disabled = true;
+        container.appendChild(textBox);
+        
+        var upId = 'btn' + id + 'Up';
+        var upButton = document.createElement('button');
+        upButton.id = upId;
+        upButton.className = 'btn btn-outline-primary';
+        upButton.innerHTML = '+';
+        container.appendChild(upButton);
+        
+        var downId = 'btn' + id + 'Down';
+        var downButton = document.createElement('button');
+        downButton.id = downId;
+        downButton.className = 'btn btn-outline-danger'
+        downButton.innerHTML = '-';
+        container.appendChild(downButton);
+
+        return container;
+    },
+    generateCard: function(id, cardText) {
+        var card = this.generateDiv();
+        card.className = 'card';
+
+        var cardHeader = this.generateDiv();
+        cardHeader.className = 'card-header';
+        card.appendChild(cardHeader);
+
+        var btnHeader = document.createElement('button');
+        btnHeader.className = 'btn btn-sm btn-none';
+        btnHeader.type = 'button';
+        btnHeader.setAttribute('data-bs-toggle', 'collapse');
+        btnHeader.setAttribute('data-bs-target', '#' + id + 'CardBody');
+        btnHeader.innerHTML = cardText;
+        cardHeader.appendChild(btnHeader);
+
+        var body = this.generateDiv();
+        body.className = 'collapse';
+        body.id = id + 'CardBody';
+        card.appendChild(body);
+
+        var cardBody = this.generateDiv();
+        cardBody.className = 'card-body';
+        cardBody.id = id + 'Container';
+        body.appendChild(cardBody);
+
+        return card;
+    },
+    modifyDropdown: function(id, options, noDefaultOptions) {        
+        var xaxis = document.getElementById('drp' + id);
+        var n = xaxis.childNodes.length;
+        
+        while (n > noDefaultOptions) {
+            xaxis.removeChild(xaxis.childNodes[n-1]);
+            n--;
+        }
+
+        for (var i=0; i<options.length; ++i) {
+            var option = document.createElement('option');
+            option.value = i;
+            option.innerHTML = options[i];
+            xaxis.appendChild(option);
+        }
+    },
+    updateTextBox: function(id, value) {
+
+        var text = document.getElementById('txt' + id);
+        text.value = value;
     }
 };
