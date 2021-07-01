@@ -1,0 +1,59 @@
+html {
+    height: 100%;
+}
+
+body{
+    font-family: sans-serif;
+    height: 100%;
+}
+
+.menu-item {
+    width: 250px;
+    height: 50px;
+    border: 1px solid gray;
+    list-style-type: none;
+    padding: 5px;
+}
+
+.container {
+  display: flex;
+}
+
+.hover {
+    background: lightgray
+}
+
+.selected{
+    background: gold
+}
+
+.collapse-btn {
+    font-size: 5px;
+    padding: 1px;
+    height: 10px;
+}
+
+.btn-none {
+    text-decoration: none;    
+}
+
+#TopSideBarMainSection {
+    background: darkgrey;
+}
+
+#infoBarMessageOutput {
+    padding: 10px;
+}
+
+.messageOutputError {
+    color: red;
+}
+.messageOutputInfo {
+    color: greenyellow;
+}
+.messageOutputLog {
+    color: blue;
+}
+.messageOutputWarn {
+    color: yellow;
+}

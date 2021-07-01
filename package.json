@@ -1,0 +1,15 @@
+{
+  "name": "datavisualizer",
+  "version": "1.0.0",
+  "description": "express server to serve both static (actual P5 Data Visualizer) and CORS bypass using axios in the backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Liu Anna",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1"
+  }
+}

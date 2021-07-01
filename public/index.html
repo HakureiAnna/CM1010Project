@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Case study 2: Data visualisation</title>
+
+    <!-- Libraries -->
+    <script src="lib/p5.min.js"></script>
+    <!-- replaced with newer version of p5.min.js which contains p5.dom.min.js making the following line redundant -->
+    <!-- <script src="lib/p5.dom.min.js"></script> -->
+
+    <!-- using axios to 'bypass' CORS restrictions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- using boostrap for easier styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Main sketch file -->
+    <script src="sketch.js"></script>
+
+    <script src="utilities.js"></script>
+    <script src="componentgenerator.js"></script>
+    <script src="infobar.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="plotwindow.js"></script>
+    <script src="menu.js"></script>
+    <script src="datasourcemenu.js"></script>
+    <script src="plotsettingsmenu.js"></script>
+    <script src="plot.js"></script>
+    <script src="xyplot.js"></script>
+    <script src="datavisualizer.js"></script>
+
+  </head>
+  <body>    
+    <div id="container" class="d-flex flex-column vh-100">
+      <!-- main column orientation -->
+      <div id="TopSideBar">
+        <div class="d-flex flex-column">
+          <div id="TopSideBarMainSection" class="flex-fill">        
+            <div class="align-middle" id="infoBarMessageOutput">
+              Data Visualizer
+            </div>
+          </div>  
+          <button id="TopSideBarCollapseBtn" class="w-100 collapse-btn" id="test2">v</button>
+        </div>
+      </div>        
+      <div class="w-100 flex-grow-1">
+        <div class="d-flex flex-row w-100 h-100">
+          <!-- left section -->
+          <!-- left row orientation -->
+          <div id="LeftSideBar" class="h-100 w-25">
+            <div class="d-flex flex-row h-100">
+              <div class="w-100 h-100" id="LeftSideBarMainSection">
+                <div style="height: 90vh; overflow: auto">                  
+                  <div class="card">
+                    <div class="card-header">
+                      <button class="btn btn-block btn-none" type="button" data-bs-toggle="collapse" data-bs-target="#dataSourceMenuBody"
+                      aria-expanded="false" aria-controls="dataSourceMenuBody">
+                        Data Source
+                      </button>
+                    </div>
+                    <div class="collapse" id="dataSourceMenuBody">
+                      <div class="card-body" id="DataSourceMenuContainer">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-header">
+                      <button class="btn btn-none" type="button" data-bs-toggle="collapse" data-bs-target="#graphSettingsMenuBody"
+                      aria-expanded="false" aria-controls="graphSettingsMenuBody">
+                        Plot Settings
+                      </button>
+                    </div>
+                    <div class="collapse" id="graphSettingsMenuBody">  
+                      <div class="card-body" id="GraphSettingsMenuContainer">                        
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-header">
+                      <button class="btn btn-none" type="button" data-bs-toggle="collapse" data-bs-target="#dataSeriesMenuBody"
+                      aria-expanded="false" aria-controls="dataSeriesMenuBody">
+                        Data Series
+                      </button>
+                    </div>
+                    <div class="collapse" id="dataSeriesMenuBody">                    
+                      <div class="card-body">
+                        <h5>Mwahahahaah</h5>
+                        <h5>Mwahahahaah</h5>
+                        <h5>Mwahahahaah</h5>
+                        <h5>Mwahahahaah</h5>
+                        <h5>Mwahahahaah</h5>                 
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="h-100"> 
+                <button class="collapse-btn h-100" id="LeftSideBarCollapseBtn">&lt;</button>
+              </div>
+            </div> 
+          </div>
+          <div class="flex-grow-1">
+            <div class="d-flex flex-row h-100 w-100" id="PlotWindow"></div>
+          </div>
+        </div>
+      </div>
+      <div id="BottomSideBar">
+        <div class="d-flex flex-column">
+          <button id="BottomSideBarCollapseBtn" class="w-100 collapse-btn">^</button>
+          <div id="BottomSideBarMainSection" class="flex-fill">              
+            <p>toolbar</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
