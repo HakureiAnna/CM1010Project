@@ -1,29 +1,32 @@
 
 var ComponentGenerator = {
-    generateComponent: function(prefix, component) {        
+    generateComponent: function(prefix, component, suffix) {        
         var cont = document.getElementById(prefix + 'Container');
         var comp = null;
+        var id = prefix + component.id + (suffix == undefined? '': suffix)
         switch (component.type) {
             case 'radioButtons':
                 comp = this.generateRadioButtons(component.label, prefix + component.group, prefix + component.name, component.options);
                 break;
             case 'button':
-                comp =  this.generateButton(prefix + component.id, component.text);
+                comp =  this.generateButton(id, component.text);
                 break;
             case 'textBox':
-                comp = this.generateTextBox(prefix + component.id, component.label);
+                comp = this.generateTextBox(id, component.label);
                 break;
             case 'dropDown':
-                comp = this.generateDropdown(prefix + component.id, component.label, component.default, component.options);
+                comp = this.generateDropdown(id, component.label, component.default, component.options);
                 break;
             case 'checkbox':
-                comp = this.generateCheckbox(prefix + component.id, component.label);
+                comp = this.generateCheckbox(id, component.label);
                 break;
             case 'counter':
-                comp = this.generateCounter(prefix + component.id, component.label);
+                comp = this.generateCounter(id, component.label);
                 break;
+            case 'colorPicker':
+                comp = this.generateColorPicker(id, component.label);
+                break;                
         }
-
         if (component.handlers != undefined) {
             component.handlers.forEach(handler => {
                 var element = comp.children[handler.target];
@@ -95,6 +98,23 @@ var ComponentGenerator = {
         
         return container;
     },
+    generateColorPicker: function(id, labelText) {
+        var container = this.generateDiv();
+
+        var label = this.generateLabel(labelText, id);
+        container.appendChild(label);
+
+        var picker = document.createElement('input');
+        picker.className = 'form-control';
+        picker.type = 'color';
+        picker.id = id;
+        picker.value = '#' + parseInt(random() * 256).toString(16)
+            + parseInt(random() * 256).toString(16)
+            + parseInt(random() * 256).toString(16);
+        container.appendChild(picker);
+
+        return container;
+    },
     generateButton: function(id, text) {
         var container = this.generateDiv();
         
@@ -109,21 +129,16 @@ var ComponentGenerator = {
     },
     generateCheckbox: function(id, labelText) {
         var container = this.generateDiv();
-
-        //container.className = 'form-check';
-        var inner = this.generateDiv();
-        inner.className = 'form-check';
-        container.appendChild(inner);
-
+        container.className = 'form-check';
         var label = this.generateLabel(labelText, id);
         label.className = 'form-check-label';
-        inner.appendChild(label);
+        container.appendChild(label);
 
         var checkbox = document.createElement('input');
         checkbox.className = 'form-check-input';
         checkbox.type = 'checkbox';
         checkbox.id = 'chk' + id;
-        inner.appendChild(checkbox);
+        container.appendChild(checkbox);
 
         return container;
     },
@@ -141,6 +156,7 @@ var ComponentGenerator = {
         var defaultOption = document.createElement('option');
         defaultOption.selected = true;
         defaultOption.innerHTML = prompt;
+        defaultOption.value = '';
         select.appendChild(defaultOption);
 
         if (options != undefined) {
@@ -225,7 +241,7 @@ var ComponentGenerator = {
 
         for (var i=0; i<options.length; ++i) {
             var option = document.createElement('option');
-            option.value = i;
+            option.value = options[i];
             option.innerHTML = options[i];
             xaxis.appendChild(option);
         }
@@ -234,5 +250,12 @@ var ComponentGenerator = {
 
         var text = document.getElementById('txt' + id);
         text.value = value;
+    },
+    clearContainer: function(container, remaining) {        
+        var n = container.childNodes.length;
+        while (n > remaining) {
+            container.removeChild(container.childNodes[n-1]);
+            n--;
+        }
     }
 };

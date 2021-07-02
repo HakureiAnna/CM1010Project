@@ -12,7 +12,7 @@ function setup() {
 
   dataVisualizer.setPlotWindow (PlotWindow(dataVisualizer, 'PlotWindow'));
 
-  dataVisualizer.addPlot(XYPlot(dataVisualizer, 'GraphSettingsMenu'));
+  dataVisualizer.addPlot(XYPlot(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
 
 
   dataVisualizer.dataSourceMenu = DataSourceMenu(dataVisualizer, 'DataSourceMenu');
@@ -26,9 +26,9 @@ function setup() {
     dataVisualizer.resize();
   };
 
+  background(125);
 }
 
 function draw() {
-  background(125);
 }
 

@@ -1,8 +1,8 @@
 function PlotWindow(parent, id) {
     var plotWindow = document.getElementById(id);
-    var canvas = null;
 
     return {
+        canvas: null,
         dimensions: null,
         /*
             initialization function
@@ -12,9 +12,9 @@ function PlotWindow(parent, id) {
             
             this.dimensions = getDimensions(id);
             
-            var c = createCanvas(this.dimensions.width, this.dimensions.height);
-            c.parent(id);
-            c.class('flex-grow-1');
+            this.canvas = createCanvas(this.dimensions.width, this.dimensions.height);
+            this.canvas.parent(id);
+            this.canvas.class('flex-grow-1');
 
         },
         /*

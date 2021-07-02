@@ -32,6 +32,7 @@ function DataVisualizer() {
         plotSettingsMenu: null,
         plots: {},
         data: [],
+        rawData: null,
         dataSeries: [],
         plot: null,
         toolBar: null,
@@ -130,6 +131,8 @@ function DataVisualizer() {
             if (parent.currentPlot != undefined) {
                 self.plots[self.currentPlot].dataSet();
             }
+
+            self.rawData = data;
         },
         dataLoadError: function() {
             self.infoBar.error('Loading data failed. please try another data source.');

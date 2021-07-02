@@ -37,7 +37,7 @@ function PlotSettingsMenu(parent, menuId) {
                     handler: function() {
                         var selection = getDropdownValue(menuId+ 'Plot');
                         resetSettings();
-                        if (selection == 'Select graph type') {
+                        if (selection == '') {
                             return;
                         }
                         parent.currentPlot = selection;
@@ -53,7 +53,7 @@ function PlotSettingsMenu(parent, menuId) {
 
     menu.reset = function() {
         var dropdown = document.getElementById('drp' + menuId + 'Plot');
-        dropdown.value = 'Select graph type';
+        dropdown.value = '';
         resetSettings();
     };
     

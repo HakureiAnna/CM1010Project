@@ -10,7 +10,17 @@ function DataSeriesMenu(parent, menuId) {
             type: 'button',
             text: 'Plot',
             id: 'Plot',
-            handlers: [],
+            handlers: [
+                {
+                    type: 'click',
+                    target: 'btn' + menuId + 'Plot',
+                    handler: function() {
+                        if (parent.currentPlot != '') {
+                            parent.plots[parent.currentPlot].plot();
+                        }
+                    }
+                }
+            ],
         },
         {
             type: 'counter',
@@ -21,13 +31,15 @@ function DataSeriesMenu(parent, menuId) {
                     type: 'click',
                     target: 'btn' + menuId + 'DataSeriesCounterUp',
                     handler: function() {
+                        if (parent.currentPlot == '') {
+                            return;
+                        }
                         var container = document.getElementById(menuId + 'Container');                        
                         container.appendChild(ComponentGenerator.generateCard(menuId + 'DataSeries' + count, 'Data Series ' + count));
-
                         var template = parent.plots[parent.currentPlot].dataSeriesTemplate;
                         var cardContainer = document.getElementById(menuId + 'DataSeries' + count + 'Container');
                         for (var i=0; i<template.length; ++i) {
-                            var component = ComponentGenerator.generateComponent(menuId, template[i]);
+                            var component = ComponentGenerator.generateComponent(menuId + 'DataSeries' + count, template[i]);
                             cardContainer.appendChild(component);
                         }
 

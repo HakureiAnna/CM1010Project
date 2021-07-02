@@ -1,11 +1,20 @@
-function Plot(parent, name, settings, dataSeriesTemplate, plot, dataSet) {    
+function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) {    
     var self = this;
+    var loadTypes= function() {
+        for (var type in types) {
+            dataSeriesTemplate[1].options.push({
+                text: type,
+                value: type,
+            });
+        }
+    };
 
-    return {
+    var plot = {
         parent: parent,
         name: name,
         settings: settings,
         dataSeriesTemplate: dataSeriesTemplate,
+        types: types,
         plot: plot,
         dataSet: dataSet,
         updateData: function() {
@@ -17,6 +26,10 @@ function Plot(parent, name, settings, dataSeriesTemplate, plot, dataSet) {
                 });
             }
             this.dataSeriesTemplate[0].options = data;
-        }
+        },        
     };
+
+    loadTypes();
+
+    return plot;
 }
