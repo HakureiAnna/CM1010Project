@@ -2,6 +2,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
     var margin = 35;
     var tick = 5;
     var subDivisions = 5;
+    var tickerThreshold = 0.05;
 
     var types = {
         line: {
@@ -127,17 +128,8 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
     var computeRange = function(maxMin, max, min) {
         var range = maxMin.max - maxMin.min + 1;
         var unit = Math.pow(10, Math.floor(Math.log10(range)));
-        maxMin.max = Math.floor((maxMin.max + unit * 0.5) / unit) * unit;
-        maxMin.min = Math.floor((maxMin.min) / unit) * unit;
         maxMin.unit = unit;
-        var n = (maxMin.max - maxMin.min) / maxMin.unit;
-        var subN = n * subDivisions;
-        var step = (max - min)/n;
-        var subStep = step / subDivisions;
-        maxMin.n = n;
-        maxMin.step = step;
-        maxMin.subN = subN;
-        maxMin.subStep = subStep;
+        maxMin.subUnit = unit / subDivisions;
 
         return maxMin;
     };
@@ -160,36 +152,105 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         stroke(0);
         textSize(12);
         textStyle(NORMAL);
+
         line(margin.left, margin.bottom, margin.right, margin.bottom);
-        for (var i=0; i<=xMaxMin.n; ++i) {
-            line(margin.left + i * xMaxMin.step, margin.bottom, 
-                margin.left + i * xMaxMin.step, margin.bottom + tick);
-            var t = (xMaxMin.min + i * xMaxMin.unit).toString();
-            var xOffset = -textWidth(t)/2;
-            var yOffset = textAscent(t) + tick * 2;
-            text(t, margin.left + i * xMaxMin.step + xOffset, margin.bottom + yOffset);
+        
+        var xStart = xMaxMin.min;
+        var x = Math.ceil(xMaxMin.min/xMaxMin.unit) * xMaxMin.unit;
+        var pos = 0;
+        var str = '';
+        var xOffset = 0;
+        var yOffset;
+        if ((x - xStart)/xMaxMin.unit > tickerThreshold) {
+            line(pos, margin.bottom, pos, margin.bottom + tick);
+            pos = map(xStart, xMaxMin.min, xMaxMin.max, margin.left, margin.right);
+            str = parseInt(xStart).toString();
+            xOffset = -textWidth(str)/2;
+            yOffset = tick * 2 + textAscent(str);
+            text(str, pos + xOffset, margin.bottom + yOffset);
+        }
+  
+
+        while (x <= xMaxMin.max) {
+            pos = map(x, xMaxMin.min, xMaxMin.max, margin.left, margin.right);
+            line(pos, margin.bottom, pos, margin.bottom + tick);
+            str = parseInt(x).toString();
+            xOffset = -textWidth(str)/2;
+            yOffset = tick * 2 + textAscent(str);
+            text(str, pos + xOffset, margin.bottom + yOffset);
+            x += xMaxMin.unit;
+        }
+
+        var xEnd = xMaxMin.max;
+        x -= xMaxMin.unit;
+        if ((xEnd - x) /xMaxMin.unit > tickerThreshold) {
+            pos = map(xEnd, xMaxMin.min, xMaxMin.max, margin.left, margin.right);
+            line(pos, margin.bottom, pos, margin.bottom + tick);
+            str = parseInt(xEnd).toString();
+            xOffset = -textWidth(str)/2;
+            yOffset = tick * 2 + textAscent(str);
+            text(str, pos + xOffset, margin.bottom + yOffset);
         }
 
         line(margin.left, margin.top, margin.left, margin.bottom);
-        for (var i=0; i<=maxMin.n; ++i) {
-            line(margin.left - tick, margin.top + i * maxMin.step, 
-                margin.left, margin.top + i * maxMin.step);
-            var t = (maxMin.max - i * maxMin.unit).toString();
-            var xOffset = -textWidth(t) - tick * 2;
-            var yOffset = textAscent(t)/2;
-            text(t, margin.left + xOffset, margin.top + i * maxMin.step + yOffset);
+
+        var yStart = maxMin.min;
+        var y = Math.ceil(maxMin.min/maxMin.unit) * maxMin.unit;
+        if ((y - yStart)/maxMin.unit > tickerThreshold) {
+            pos = map(yStart, maxMin.min, maxMin.max, margin.bottom, margin.top);
+            line(margin.left - tick, pos, margin.left, pos);
+            str = parseInt(yStart).toString();
+            xOffset = -textWidth(str) - tick * 2;
+            yOffset = textAscent(str)/2;
+            text(str, margin.left + xOffset, pos + yOffset);
+        }
+
+        y = Math.ceil(maxMin.min/maxMin.unit) * maxMin.unit;
+        while (y <= maxMin.max) {
+            pos = map(y, maxMin.min, maxMin.max, margin.bottom, margin.top);
+            line(margin.left - tick, pos, margin.left, pos);
+            str = parseInt(y).toString();
+            xOffset = -textWidth(str) - tick * 2;
+            yOffset = textAscent(str)/2;
+            text(str, margin.left + xOffset, pos + yOffset);
+            y += maxMin.unit;
+        }   
+
+        yEnd  = maxMin.max;
+        y -= maxMin.unit;
+        if ((yEnd - y) /maxMin.unit > tickerThreshold) {
+            pos = map(yEnd, maxMin.min, maxMin.max, margin.bottom, margin.top);
+            line(margin.left - tick, pos, margin.left, pos);
+            str = parseInt(yEnd).toString();
+            xOffset = -textWidth(str) - tick * 2;
+            yOffset = textAscent(str)/2;
+            text(str, margin.left + xOffset, pos + yOffset);
         }
     };
 
     var drawGrid = function(xMaxMin, maxMin, margin) {
         stroke(128);
-        for (var i = 0; i<=xMaxMin.subN; ++i) {
-            line(margin.left + i * xMaxMin.subStep, margin.top, 
-                margin.left + i * xMaxMin.subStep, margin.bottom);
+        
+        var x = Math.ceil(xMaxMin.min/xMaxMin.subUnit) * xMaxMin.subUnit;
+        var pos;
+        while (x <= xMaxMin.max) {
+            pos = map(x, xMaxMin.min, xMaxMin.max, margin.left, margin.right);
+            line(pos, margin.top, pos, margin.bottom);
+            x += xMaxMin.subUnit;
         }
-        for (var i = 0; i<=maxMin.subN; ++i) {
-            line(margin.left, margin.top + i * maxMin.subStep, margin.right, margin.top + i * maxMin.subStep);
+        x = xMaxMin.max;
+        pos = map(x, xMaxMin.min, xMaxMin.max, margin.left, margin.right);
+        line(pos, margin.top, pos, margin.bottom);
+        
+        var y = Math.ceil(maxMin.min/maxMin.subUnit) * maxMin.subUnit;
+        while (y <= maxMin.max) {
+            pos = map(y, maxMin.min, maxMin.max, margin.bottom, margin.top);
+            line(margin.left, pos, margin.right, pos);
+            y += maxMin.subUnit;
         }
+        y = maxMin.max;
+        pos = map(y, maxMin.min, maxMin.max, margin.bottom, margin.top);
+        line(margin.left, pos, margin.right, pos);
     }
   
     return Plot(

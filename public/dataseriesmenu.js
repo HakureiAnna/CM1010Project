@@ -30,7 +30,9 @@ function DataSeriesMenu(parent, menuId) {
                 {
                     type: 'click',
                     target: 'btn' + menuId + 'DataSeriesCounterUp',
-                    handler: function() {
+                    handler: function() {  
+                        parent.gallery.reset();          
+                        
                         if (parent.currentPlot == '') {
                             return;
                         }

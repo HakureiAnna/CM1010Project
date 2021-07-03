@@ -1,6 +1,8 @@
 var dataVisualizer = null;
+var gallery = null;
 
 function setup() {
+  // after thought (static)
 
   dataVisualizer = DataVisualizer();
 
@@ -21,14 +23,32 @@ function setup() {
 
   dataVisualizer.setup();
 
+  gallery = new Gallery('StaticMenu', 'Visuals');
+  gallery.addVisual(new TechDiversityRace());
+  gallery.addVisual(new TechDiversityGender());
+  gallery.addVisual(new PayGapByJob2017());
+  gallery.addVisual(new PayGapTimeSeries());
+  gallery.addVisual(new ClimateChange());
+  gallery.addVisual(new UKFoodAttitudes());
+  gallery.addVisual(new NutrientsTimeSeries());
+  gallery.addVisual(new Waffles());  
+
+  dataVisualizer.setGallery(gallery);
+
   // link the resize event handler to the window resize event
   window.onresize = function(e) {    
     dataVisualizer.resize();
   };
 
   background(125);
+
 }
 
 function draw() {
+  if (gallery.selectedVisual) {
+    gallery.selectedVisual.draw();
+    if (gallery.selectedVisual.id == 'waffles') {    
+      gallery.selectedVisual.check();
+    }
+  }
 }
-

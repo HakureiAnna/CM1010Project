@@ -1,6 +1,6 @@
 function DataVisualizer() {
     var self = null;
-
+    
     /*
         if data is loaded by rows, choosable data series will either have
         first row header or column number as name
@@ -40,6 +40,9 @@ function DataVisualizer() {
         withHeaders: false,
         rowOrColumn: null,
         currentPlot: '',
+        setGallery: function(gallery) {
+            this.gallery = gallery;
+        },
         /*
             initialization function
         */
@@ -77,6 +80,10 @@ function DataVisualizer() {
                 height: isCollapsing? delta.height: -delta.height
             };
             this.plotWindow.resize(d, false);
+            
+            if (this.currentPlot != '') {
+                this.plots[this.currentPlot].plot();
+            }
         },
         addPlot: function(plot) {
             this.plots[plot.name] = plot;
@@ -109,6 +116,10 @@ function DataVisualizer() {
             // resize the remaining components
             this.sideBars.top.resize();
             this.sideBars.bottom.resize();
+            
+            if (this.currentPlot != '') {
+                this.plots[this.currentPlot].plot();
+            }
         },
         loadData: function(uri, rowOrColumn, withHeaders) {
             self.rowOrColumn = rowOrColumn;

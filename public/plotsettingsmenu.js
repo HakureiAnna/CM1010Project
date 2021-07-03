@@ -44,7 +44,8 @@ function PlotSettingsMenu(parent, menuId) {
                         loadSettings(selection);
                         parent.plots[parent.currentPlot].dataSet();
                           
-                        parent.dataSeriesMenu.reset();       
+                        parent.dataSeriesMenu.reset();         
+                        parent.gallery.reset();          
                     }
                 }
             ]

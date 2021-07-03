@@ -78,7 +78,8 @@ function DataSourceMenu(parent, menuId) {
 
                         parent.loadData(uri, orientation, withHeaders);
                         parent.plotSettingsMenu.reset();        
-                        parent.dataSeriesMenu.reset();                
+                        parent.dataSeriesMenu.reset();     
+                        parent.gallery.reset();           
                     }
                 },
             ]

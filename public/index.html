@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Case study 2: Data visualisation</title>
+    <title>Data Visualizer</title>
 
     <!-- Libraries -->
     <script src="lib/p5.min.js"></script>
@@ -23,6 +23,7 @@
     <!-- Main sketch file -->
     <script src="sketch.js"></script>
 
+    <!-- project files -->
     <script src="utilities.js"></script>
     <script src="componentgenerator.js"></script>
     <script src="infobar.js"></script>
@@ -35,6 +36,21 @@
     <script src="plot.js"></script>
     <script src="xyplot.js"></script>
     <script src="datavisualizer.js"></script>
+
+    <!-- original files -->
+    <script src="static/helper-functions.js"></script>
+    <script src="static/gallery.js"></script>
+    <script src="static/pie-chart.js"></script>
+    <script src="static/tech-diversity-race.js"></script>
+    <script src="static/tech-diversity-gender.js"></script>
+    <script src="static/pay-gap-1997-2017.js"></script>
+    <script src="static/pay-gap-by-job-2017.js"></script>
+    <script src="static/climate-change.js"></script>
+    <script src="static/uk-food-attitudes.js"></script>
+    <script src="static/nutrients-1974-2016.js"></script>
+    <script src="static/box.js"></script>
+    <script src="static/waffle.js"></script>
+    <script src="static/waffles.js"></script>
 
   </head>
   <body>    
@@ -91,6 +107,22 @@
                     </div>
                     <div class="collapse" id="dataSeriesMenuBody">                    
                       <div class="card-body" id="DataSeriesMenuContainer">        
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <div class="card-header">
+                      <button class="btn btn-sm btn-none" type="button" data-bs-toggle="collapse" data-bs-target="#StaticMenuBody"
+                      aria-expanded="false" aria-controls="StaticMenuBody">
+                        Static (Original)
+                      </button>
+                    </div>
+                    <div class="collapse" id="StaticMenuBody">                    
+                      <div class="card-body" id="StaticMenuContainer">  
+                        <div class="form-group">
+                          <label for="visuals-menu">Visuals :</label>
+                          <select class="form-select" id="drpStaticMenuVisuals"></select>
+                        </div>      
                       </div>
                     </div>
                   </div>

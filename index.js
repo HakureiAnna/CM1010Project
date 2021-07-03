@@ -6,7 +6,7 @@ app.use(express.static('public', {
     extensions: ['csv', 'html', 'js', 'css']
 }));
 
-const port = 5500;
+const port = 5555;
 
 app.get('/load', (req, res) => {    
     var uri = req.query.uri;
