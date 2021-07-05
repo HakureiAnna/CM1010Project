@@ -1,4 +1,8 @@
+/*
+    this is the main class for the new application.
+ */
 function DataVisualizer() {
+    // self pointer
     var self = null;
     
     /*
@@ -25,21 +29,33 @@ function DataVisualizer() {
     };
 
     return {
+        // dict of side bars
         sideBars: {},
+        // plot window reference
         plotWindow: null,
+        // data source menu reference
         dataSourceMenu: null,
+        // data series menu reference
         dataSeriesMenu: null,
+        // plot settings menu reference
         plotSettingsMenu: null,
+        // dict of plot types
         plots: {},
+        // selected data series
         data: [],
+        // holds the P5.Table reference
         rawData: null,
-        dataSeries: [],
-        plot: null,
+        // toolbar refernce
         toolBar: null,
+        // info bar reference
         infoBar: null,
+        // flag indicating if loaded data has headers
         withHeaders: false,
+        // indicates if row-based or column-based data
         rowOrColumn: null,
+        // currently selected plot
         currentPlot: '',
+        // reference to original template
         setGallery: function(gallery) {
             this.gallery = gallery;
         },
@@ -57,12 +73,21 @@ function DataVisualizer() {
                 this.sideBars[key].setup();
             }
         },
+        /*
+            add new sidebar to data visualizer
+         */
         addSideBar: function(name, sidebar) {
-            this.sideBars[name] = sidebar;
+            this.sideBars[name] = sidebar;            
         },
+        /*
+            set info bar
+         */
         setInfoBar: function(infoBar) {
             this.infoBar = infoBar;
         },
+        /* 
+            set the plot window
+         */
         setPlotWindow: function(plotWindow) {
             this.plotWindow = plotWindow;
         },
@@ -85,6 +110,9 @@ function DataVisualizer() {
                 this.plots[this.currentPlot].plot();
             }
         },
+        /*
+            add additional plot type to data visualizer
+         */
         addPlot: function(plot) {
             this.plots[plot.name] = plot;
         },
@@ -121,13 +149,20 @@ function DataVisualizer() {
                 this.plots[this.currentPlot].plot();
             }
         },
+        /*
+            called upon data source menu get data button click
+         */
         loadData: function(uri, rowOrColumn, withHeaders) {
             self.rowOrColumn = rowOrColumn;
             self.withHeaders = withHeaders;
 
             loadTable(uri, withHeaders?'header':'', this.dataLoaded, this.dataLoadError);            
         },
+        /*
+            callback on successful data loading
+        */
         dataLoaded: function(data) {
+            // if loaded data is empty, update info bar and return
             if (data.rows.length == 0) {
                 self.infoBar.error('No data retrieved. Please try another data source.');
                 return;
@@ -145,6 +180,9 @@ function DataVisualizer() {
 
             self.rawData = data;
         },
+        /*
+            callback on data loading erro
+         */
         dataLoadError: function() {
             self.infoBar.error('Loading data failed. please try another data source.');
         }

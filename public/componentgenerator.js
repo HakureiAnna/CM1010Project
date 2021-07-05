@@ -1,5 +1,13 @@
-
+/*
+ Workhorse for the templating system
+ */
 var ComponentGenerator = {
+    /* 
+        main function to component generation
+        prefix: usually the menu id to ensure components of the same type has no name collision in id
+        component: initialization data for component
+        suffix: optional parameter for cases where more than one component can possibly be generated (data series)
+     */
     generateComponent: function(prefix, component, suffix) {        
         var cont = document.getElementById(prefix + 'Container');
         var comp = null;
@@ -27,6 +35,7 @@ var ComponentGenerator = {
                 comp = this.generateColorPicker(id, component.label);
                 break;                
         }
+        // add event handlers
         if (component.handlers != undefined) {
             component.handlers.forEach(handler => {
                 var element = comp.children[handler.target];
@@ -46,18 +55,32 @@ var ComponentGenerator = {
         }
         return comp;
     },
+    /*
+        generator for div with default settings
+    */
     generateDiv: function() {
         var div = document.createElement('div');
         div.className = 'form-group';
         return div;
     },
+    /*
+        generator for label with default settings
+        labelText: text for label
+        forId; id of object to add label to
+    */
     generateLabel: function(labelText, forId) {
         var label = document.createElement('label');
         label.attributes.for = forId;
         label.innerHTML = labelText;
         return label;
     },
-
+    /*
+        generator for radio button 'group'
+        topLabelText: group label text
+        groupId: group id
+        name: name to correlate all radio buttons by
+        options: array of initialization button for individual radio button options
+     */
     generateRadioButtons: function(topLabelText, groupId, name, options) {
         var container = this.generateDiv();
         container.appendChild(this.generateLabel(topLabelText, groupId));
@@ -85,6 +108,11 @@ var ComponentGenerator = {
 
         return container;
     },
+    /*
+        generator for textbox
+        id: textbox id
+        labelText: text for label attached to the text box
+     */
     generateTextBox: function(id, labelText) {
         var container = this.generateDiv();
         
@@ -98,6 +126,11 @@ var ComponentGenerator = {
         
         return container;
     },
+    /*
+        generator for color picker
+        id: color picker id
+        labelText: text for label attached to the color picker
+     */
     generateColorPicker: function(id, labelText) {
         var container = this.generateDiv();
 
@@ -115,6 +148,11 @@ var ComponentGenerator = {
 
         return container;
     },
+    /*
+        generator for button
+        id: id of button
+        text: text to display on button
+     */
     generateButton: function(id, text) {
         var container = this.generateDiv();
         
@@ -127,6 +165,11 @@ var ComponentGenerator = {
 
         return container;
     },
+    /*
+        generator for checkbox
+        id: id for checkbox
+        text: text for label attached to checkbox
+     */
     generateCheckbox: function(id, labelText) {
         var container = this.generateDiv();
         container.className = 'form-check';
@@ -142,6 +185,13 @@ var ComponentGenerator = {
 
         return container;
     },
+    /*
+        generator for dropdown list
+        id: id of list (select)
+        labelText: text for label attached to list
+        prompt: default option displayed
+        options: options to add to the drop down list
+     */
     generateDropdown: function(id, labelText, prompt, options) {
         var container = this.generateDiv();
         
@@ -170,6 +220,11 @@ var ComponentGenerator = {
 
         return container;
     },    
+    /*
+        generator for custom counter component with a label, a count and two buttons for add/ remove
+        id: id for counter component
+        label: text for label of counter
+     */
     generateCounter: function(id, label) {
         var container = this.generateDiv();
         container.className = 'input-group input-group-sm';
@@ -202,6 +257,11 @@ var ComponentGenerator = {
 
         return container;
     },
+    /*
+        generator for a collapsible card component.
+        id: id for the card
+        cardText: title to be set on the card header
+     */
     generateCard: function(id, cardText) {
         var card = this.generateDiv();
         card.className = 'card';
@@ -230,6 +290,12 @@ var ComponentGenerator = {
 
         return card;
     },
+    /*
+        modifier for dropdown list, often used to repopulate a dropdown list
+        id: id of dropdown
+        options: new initialization array for options in the list
+        noDefaultOptions: number of options to remain in list after clearing
+    */
     modifyDropdown: function(id, options, noDefaultOptions) {        
         var xaxis = document.getElementById('drp' + id);
         var n = xaxis.childNodes.length;
@@ -246,11 +312,21 @@ var ComponentGenerator = {
             xaxis.appendChild(option);
         }
     },
+    /*
+        updater for textbox
+        id: id of textbox
+        value: value to set textbox to
+     */
     updateTextBox: function(id, value) {
 
         var text = document.getElementById('txt' + id);
         text.value = value;
     },
+    /*
+        purge container content.
+        container: id of container
+        remaining: no. of elements to remain within container
+    */
     clearContainer: function(container, remaining) {        
         var n = container.childNodes.length;
         while (n > remaining) {

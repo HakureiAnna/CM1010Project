@@ -1,14 +1,23 @@
+/*
+    concrete line plot class.
+*/
 function XYPlot(parent, settingsMenuId, templateMenuId) {
+    /* 
+        list of possible plot settings currently set statically
+    */
+    // plot margins    
     var margin = 35;
+    // length of tick mark
     var tick = 5;
+    // no. of sub divisions per division
     var subDivisions = 5;
+    // ticker threshold to determine whether to output tick text at edges
     var tickerThreshold = 0.05;
 
+    // list of sub types
     var types = {
         line: {
-            selected: function() {
-
-            },
+            // plotting function for a data series with type set to line
             plot: function(data, xData, margin, xMaxMin, maxMin) {
                 console.log(data);
                 var d = parent.rawData;
@@ -31,6 +40,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                     prevY = currY;
                 }
             },
+            // template of options for a data series with type set to line
             template: [
                 {
                     type: 'colorPicker',
@@ -41,9 +51,9 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         }
     };
 
-    var xAxisOptions = [];    
     var self = this;
 
+    // function used to get plot setitngs menu settings
     var getSettings = function() {
         var settings = [];
         var c = document.getElementById(settingsMenuId + 'Container');
@@ -55,6 +65,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         return settings;
     };
 
+    // function used to get list of data series names
     var getData = function() {        
         var data = [];
         var c = document.getElementById(templateMenuId + 'Container');
@@ -77,6 +88,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         return data;
     };
 
+    // compute the plot window x-axis limits
     var getXMaxMin = function(xData) {
         var min = Number.MAX_VALUE;
         var max = Number.MIN_VALUE;
@@ -99,6 +111,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         };
     };
 
+    // compute the plot window y-axis limits
     var getMaxMin = function(data) {
         var min = Number.MAX_VALUE;
         var max = Number.MIN_VALUE;
@@ -125,6 +138,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         };
     };
 
+    // compute plotting data (units and subunits)
     var computeRange = function(maxMin, max, min) {
         var range = maxMin.max - maxMin.min + 1;
         var unit = Math.pow(10, Math.floor(Math.log10(range)));
@@ -134,6 +148,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         return maxMin;
     };
 
+    // compute margin based on current plot windows dimensions
     var computeMargin = function() {
         var left = margin * 2;
         var right = width - margin * 2;
@@ -148,6 +163,10 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         };
     };
 
+    /*
+        draw axis function that dynamically determines if to draw the tick text at the
+        edge of the axes. This is determined based on how close the edges are to drawn tickers at unit divides.
+    */
     var drawAxis = function(xMaxMin, maxMin, margin) { 
         stroke(0);
         textSize(12);
@@ -228,6 +247,9 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         }
     };
 
+    /*
+        function used to draw the grid
+    */
     var drawGrid = function(xMaxMin, maxMin, margin) {
         stroke(128);
         
@@ -253,6 +275,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         line(margin.left, pos, margin.right, pos);
     }
   
+    // initialize based plot object
     return Plot(
         parent,
         'XY Plot',
@@ -263,7 +286,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                 label: 'X-Axis Data Series:',
                 id: 'XAxisDataSeries',
                 default: 'Select data series for x-axis',
-                options: xAxisOptions,
+                options: [],
                 handlers: [
                 ]                
             },

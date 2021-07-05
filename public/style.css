@@ -37,10 +37,16 @@ body{
     text-decoration: none;    
 }
 
+/*
+    info bar background for contrast with displayed messages
+*/
 #TopSideBarMainSection {
     background: darkgrey;
 }
 
+/*
+    info bar message display classes
+ */
 #infoBarMessageOutput {
     padding: 10px;
 }

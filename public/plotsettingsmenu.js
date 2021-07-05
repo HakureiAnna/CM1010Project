@@ -1,4 +1,8 @@
+/*
+    Plot Settings Menu used for placing settings related to the entire plot
+*/
 function PlotSettingsMenu(parent, menuId) {
+    // list of plot types
     var options = [];
     for (var p in parent.plots) {
         options.push(
@@ -8,6 +12,7 @@ function PlotSettingsMenu(parent, menuId) {
             }
         );
     }
+    // used to reset this menu to default  settings
     var resetSettings = function() {
         var cont = document.getElementById(menuId + 'Container');    
         var keys = Object.keys(menu.components);
@@ -16,6 +21,7 @@ function PlotSettingsMenu(parent, menuId) {
             menu.removeComponent(keys[i]);
         }
     }
+    // used to load plot specific settings
     var loadSettings = function(plot) {
         var settings = parent.plots[plot].settings;
         for (var i=0; i<settings.length; ++i) {
@@ -23,6 +29,7 @@ function PlotSettingsMenu(parent, menuId) {
         }
     }
 
+    // initialize base menu
     var menu = Menu(parent, menuId, [
         {
             type: 'dropDown',
@@ -34,6 +41,7 @@ function PlotSettingsMenu(parent, menuId) {
                 {
                     type: 'change',
                     target: 'drp' + menuId + 'Plot',
+                    // handler for when a new plot is selcted
                     handler: function() {
                         var selection = getDropdownValue(menuId+ 'Plot');
                         resetSettings();

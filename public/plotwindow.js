@@ -1,8 +1,13 @@
+/*
+    Plot Window class, used for auto resizing of the plot window (canvas)
+*/
 function PlotWindow(parent, id) {
     var plotWindow = document.getElementById(id);
 
     return {
+        // canvas reference
         canvas: null,
+        // current dimensions of the plot window
         dimensions: null,
         /*
             initialization function

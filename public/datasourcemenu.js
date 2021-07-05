@@ -1,5 +1,10 @@
+/*
+    Data Source Menu that is used to choose between external/ internal data, configure the way the data is imported
+ */
 function DataSourceMenu(parent, menuId) {
+    // initialize base class
     var menu = Menu(parent, menuId, [
+        // radio button set to select between internal and external data sets
         {
             type: 'radioButtons',
             label: 'Source Type:', 
@@ -15,7 +20,8 @@ function DataSourceMenu(parent, menuId) {
                     value: 'internal'
                 }
             ]
-        },,
+        },
+        // radio button set to select between row-based or column-based data
         {
             type: 'radioButtons',
             label: 'Data Orientation:',
@@ -32,20 +38,24 @@ function DataSourceMenu(parent, menuId) {
                 },
             ]
         },
+        // checkbox to set if imported data has header row/ column
         {
             type: 'checkbox',
             id: 'WithHeaders',
             label: 'With Headers'
         },
+        // textbox to enter path (URI) to dataset
         {
             type: 'textBox',
             id: 'Path',
             label: 'Path:'
         },
+        // button to load data
         {
             type: 'button',
             id: 'GetData',
             text: 'Get Data',
+            // handler for when load data is pressed
             handlers: [
                 {
                     type: 'click',

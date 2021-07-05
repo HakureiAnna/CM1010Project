@@ -1,16 +1,24 @@
+/*
+    SideBar class used to implement collapsible side bars.
+ */
 function SideBar(parent, isVertical,
     sideBarId, sideBarShowClass, sideBarHideClass, 
     mainSectionShowClass, mainSectionHideClass,
     btnShowText, btnHideText) {
+    // reference to base object
     var sideBar = null;
+    // used to toggle collapse status of side bar
     var collapseBtn = null;
+    // reference to main section div
     var mainSection = null;
+    // self pointer
     var self = this;
 
     return {
         sideBarId: sideBarId,
         collapsed: false,
         dimensions: null,
+        // function used to toggle between collapse status
         collapse: function() {
             if (!self.collapsed) {
                 sideBar.class(sideBarHideClass);

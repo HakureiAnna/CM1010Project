@@ -1,11 +1,19 @@
+/*
+    Data series mnenu class
+    this class is in charge of maintaing the list of data series to be ploted.
+ */
 function DataSeriesMenu(parent, menuId) {
+    // no. of data series
     var count = 0;
 
+    // used to update counter display
     var update = function() {
         ComponentGenerator.updateTextBox(menuId + 'DataSeriesCounter', count);
     }
 
+    // initialize base class
     var menu = Menu(parent, menuId, [
+        // plotting button
         {
             type: 'button',
             text: 'Plot',
@@ -16,12 +24,14 @@ function DataSeriesMenu(parent, menuId) {
                     target: 'btn' + menuId + 'Plot',
                     handler: function() {
                         if (parent.currentPlot != '') {
+                            parent.gallery.reset();   
                             parent.plots[parent.currentPlot].plot();
                         }
                     }
                 }
             ],
         },
+        // counter component used to display no. of plotted data series
         {
             type: 'counter',
             label: 'Data Series Count: ',
@@ -30,9 +40,9 @@ function DataSeriesMenu(parent, menuId) {
                 {
                     type: 'click',
                     target: 'btn' + menuId + 'DataSeriesCounterUp',
+                    // handler for when the add button is pressed                    
                     handler: function() {  
-                        parent.gallery.reset();          
-                        
+                        // guard to check if current plot is set
                         if (parent.currentPlot == '') {
                             return;
                         }
@@ -52,6 +62,7 @@ function DataSeriesMenu(parent, menuId) {
                 {
                     type: 'click',
                     target: 'btn' + menuId + 'DataSeriesCounterDown',
+                    // handler for when the remove button is pressed
                     handler: function() {
                         if (count > 0) {
                             var container = document.getElementById('DataSeriesMenuContainer');
@@ -66,6 +77,7 @@ function DataSeriesMenu(parent, menuId) {
         },
     ]);
 
+    // used to reset the selected data series when earlier stages (data source and plot settings are reconfigured)
     menu.reset = function() {
         var container = document.getElementById(menuId + 'Container');
         while (count > 0) {
@@ -75,6 +87,7 @@ function DataSeriesMenu(parent, menuId) {
         update();
     };
 
+    // initial update call to display counter as 0
     update();
 
     return menu;

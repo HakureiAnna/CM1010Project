@@ -2,12 +2,15 @@ const express = require('express');
 const axios = require('axios');
 
 const app = express();
+// allow static file loading from public/ folder
 app.use(express.static('public', {
     extensions: ['csv', 'html', 'js', 'css']
 }));
 
+// set port used
 const port = 5555;
 
+// actual CORS bypass
 app.get('/load', (req, res) => {    
     var uri = req.query.uri;
     axios.get(uri, {responseType: 'blob'})
@@ -19,6 +22,7 @@ app.get('/load', (req, res) => {
     });
 });
 
+// run express server
 var server = app.listen(port, function() {
     var host = server.address().address;
     var port = server.address().port;
