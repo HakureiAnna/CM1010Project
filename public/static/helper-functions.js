@@ -128,3 +128,12 @@ function drawXAxisTickLabel(value, layout, mapFunction) {
          layout.bottomMargin);
   }
 }
+
+function getRandomID() {
+	var alpha = 'abcdefghijklmnopqrstuvwxyz0123456789';
+	var s = '';
+	for (var i = 0; i < 10; ++i) {
+		s += alpha[floor(random(0, alpha.length))];
+	}
+	return s;
+}

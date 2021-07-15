@@ -19,21 +19,19 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         line: {
             // plotting function for a data series with type set to line
             plot: function(data, xData, margin, xMaxMin, maxMin) {
-                console.log(data);
                 var d = parent.rawData;
                 var n = d.getRowCount();
                 var row = d.getRow(0);
                 var prevX = map(row.getNum(xData), 
                     xMaxMin.min, xMaxMin.max, margin.left, margin.right);;
-                var prevY = map(row.getNum(data[0]), 
+                var prevY = map(row.getNum(parent.data.indexOf(data[0])), 
                     maxMin.min, maxMin.max, margin.bottom, margin.top);
-
                 stroke(data[2]);
                 for (var i=1; i<n; ++i) {
                     row = d.getRow(i);
                     var currX = map(row.getNum(xData), 
                         xMaxMin.min, xMaxMin.max, margin.left, margin.right);
-                    var currY = map(row.getNum(data[0]),    
+                    var currY = map(row.getNum(parent.data.indexOf(data[0])),    
                         maxMin.min, maxMin.max, margin.bottom, margin.top);
                     line(prevX, prevY, currX, currY);
                     prevX = currX;
@@ -57,10 +55,13 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
     var getSettings = function() {
         var settings = [];
         var c = document.getElementById(settingsMenuId + 'Container');
-        console.log(c.childNodes.length);
+        //var prefix = parent.rowOrColumn=='row'? 'Row ': 'Column ';
         for (var i=2; i<c.childNodes.length; ++i) {
-            var ct = c.childNodes[i].childNodes[1];
-            settings.push(ct.value);
+            var ct = c.childNodes[i].childNodes[1].value;
+            if (i==2) {
+                ct = parent.data.indexOf(ct);
+            }
+            settings.push(ct);
         }
         return settings;
     };
@@ -92,17 +93,15 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
     var getXMaxMin = function(xData) {
         var min = Number.MAX_VALUE;
         var max = Number.MIN_VALUE;
-        if (parent.rowOrColumn == 'row') {
-            var n = parent.rawData.getRowCount();
-            for (var i=0; i<n; ++i) {
-                var row = parent.rawData.getRow(i);
-                var x = row.getNum(xData);
-                if (x > max) {
-                    max = x;
-                }
-                if (x < min) {
-                    min = x;
-                }
+        var n = parent.rawData.getRowCount();
+        for (var i=0; i<n; ++i) {
+            var row = parent.rawData.getRow(i);
+            var x = row.getNum(xData);
+            if (x > max) {
+                max = x;
+            }
+            if (x < min) {
+                min = x;
             }
         }
         return {
@@ -115,18 +114,16 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
     var getMaxMin = function(data) {
         var min = Number.MAX_VALUE;
         var max = Number.MIN_VALUE;
-        if (parent.rowOrColumn == 'row') {
-            var n = parent.rawData.getRowCount();
-            for (var i=0; i<n; ++i) {
-                var row = parent.rawData.getRow(i);
-                for (var j=0; j<data.length; ++j) {
-                    var x = row.getNum(data[j][0]);
-                    if (x > max) {
-                        max = x;
-                    }
-                    if (x < min) {
-                        min = x;
-                    }
+        var n = parent.rawData.getRowCount();
+        for (var i=0; i<n; ++i) {
+            var row = parent.rawData.getRow(i);
+            for (var j=0; j<data.length; ++j) {   
+                var x = row.getNum(parent.data.indexOf(data[j][0]));
+                if (x > max) {
+                    max = x;
+                }
+                if (x < min) {
+                    min = x;
                 }
             }
         }
@@ -345,8 +342,6 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
             var margin = computeMargin();
             var xMaxMin = computeRange(getXMaxMin(settings[0]), margin.right, margin.left);
             var maxMin = computeRange(getMaxMin(data), margin.bottom, margin.top);
-
-            console.log(xMaxMin, maxMin, margin);
 
             background(255);
             drawAxis(xMaxMin, maxMin, margin);

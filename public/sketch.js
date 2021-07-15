@@ -40,6 +40,7 @@ function setup() {
   gallery.addVisual(new UKFoodAttitudes());
   gallery.addVisual(new NutrientsTimeSeries());
   gallery.addVisual(new Waffles());  
+  gallery.addVisual(new BubbleChart());
 
   // link new app to original template code (required for proper plot rendering)
   dataVisualizer.setGallery(gallery);

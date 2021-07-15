@@ -12,20 +12,77 @@ function DataVisualizer() {
     var loadRows = function(data) {
         if (self.withHeaders) {
             self.data = data.columns;
-            return;
+            return data;
         }
-        // no header NOT IMPLEMENTED YET
+        var cols = [];
+        for (var i=0; i<data.columns.length; ++i) {
+            cols.push('Column ' + (i+1));
+        };
+        data.columns = cols;
+        self.data = cols;
+        return data;
     };
     
     /*
         if data is loaded by columns, choosable data series will either have
         first column header or row number as names
-        NOT IMPLEMENTED YET
      */
     var loadColumns = function(data) {
-        if (withHeaders) {
-            
+        if (self.withHeaders) {
+            var rows = [];
+            var cols = [];
+            var rowN = data.getRowCount();
+            var colN = data.getColumnCount();
+        
+            for (var i=0; i<colN-1; ++i) {
+                rows.push('');
+            }
+            for (var i=0; i<rowN; ++i) {
+                var r = data.rows[i];
+                for (var j=0; j<colN; ++j) {	
+                    if (j==0)  {
+                        cols.push(r.get(j));
+                    } else {
+                        rows[j-1] += r.get(j);
+                        if (i<rowN-1) {
+                            rows[j-1]+=',';
+                        }
+                    }
+                }
+            }	
+            var data_t = new p5.Table();	
+            for (var i=0; i<colN-1; ++i) {
+                data_t.addRow( new p5.TableRow(rows[i]));
+            }
+            data_t.columns = cols;      
+            self.data = cols;
+            return data_t;
         }
+        var rows = [];
+        var  cols = [];
+        var rowN = data.getRowCount();
+        var colN = data.getColumnCount();
+    
+        for (var i=0; i<colN; ++i) {
+            rows.push('');
+        }
+        for (var i=0; i<rowN; ++i) {
+            var r = data.rows[i];
+            cols.push('Row ' + (i+1));
+            for (var j=0; j<colN; ++j) {	
+                rows[j] += r.get(j);
+                if (i<rowN-1) {
+                    rows[j]+=',';
+                }
+            }
+        }	
+        var data_tnh = new p5.Table();	
+        for (var i=0; i<colN; ++i) {
+            data_tnh.addRow( new p5.TableRow(rows[i]));
+        }
+        data_tnh.columns = cols;
+        self.data = cols;
+        return data_tnh;
     };
 
     return {
@@ -155,8 +212,8 @@ function DataVisualizer() {
         loadData: function(uri, rowOrColumn, withHeaders) {
             self.rowOrColumn = rowOrColumn;
             self.withHeaders = withHeaders;
-
-            loadTable(uri, withHeaders?'header':'', this.dataLoaded, this.dataLoadError);            
+            var header = withHeaders? (rowOrColumn=='row'? 'header':''): '';
+            loadTable(uri, header, this.dataLoaded, this.dataLoadError);            
         },
         /*
             callback on successful data loading
@@ -168,7 +225,7 @@ function DataVisualizer() {
                 return;
             }
 
-            self.rowOrColumn == 'row'? loadRows(data): loadColumns(data);
+            data = (self.rowOrColumn == 'row'? loadRows(data): loadColumns(data));
 
             for (var p in self.plots) {
                 self.plots[p].updateData();
