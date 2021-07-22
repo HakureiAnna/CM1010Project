@@ -23,7 +23,8 @@ var ComponentGenerator = {
                 comp = this.generateTextBox(id, component.label);
                 break;
             case 'dropDown':
-                comp = this.generateDropdown(id, component.label, component.default, component.options);
+                comp = this.generateDropdown(id, component.label, component.default, component.options, 
+                    component.hasOwnProperty('multi')? component.multi: false);
                 break;
             case 'checkbox':
                 comp = this.generateCheckbox(id, component.label);
@@ -38,7 +39,7 @@ var ComponentGenerator = {
         // add event handlers
         if (component.handlers != undefined) {
             component.handlers.forEach(handler => {
-                var element = comp.children[handler.target];
+                var element = comp.childNodes[handler.target];
                 switch (handler.type) {
                     case 'click':
                         element.onclick = handler.handler;
@@ -192,7 +193,7 @@ var ComponentGenerator = {
         prompt: default option displayed
         options: options to add to the drop down list
      */
-    generateDropdown: function(id, labelText, prompt, options) {
+    generateDropdown: function(id, labelText, prompt, options, multi) {
         var container = this.generateDiv();
         
         var label = this.generateLabel(labelText, id);
@@ -201,13 +202,18 @@ var ComponentGenerator = {
         var select = document.createElement('select');
         select.id = 'drp' + id;
         select.className = 'form-select';
+        if (multi) {
+            select.multiple = true;
+        }
         container.appendChild(select);
 
-        var defaultOption = document.createElement('option');
-        defaultOption.selected = true;
-        defaultOption.innerHTML = prompt;
-        defaultOption.value = '';
-        select.appendChild(defaultOption);
+        if (prompt) {
+            var defaultOption = document.createElement('option');
+            defaultOption.selected = true;
+            defaultOption.innerHTML = prompt;
+            defaultOption.value = 'default';
+            select.appendChild(defaultOption);
+        }
 
         if (options != undefined) {
             for (var i=0; i<options.length; ++i) {
@@ -333,5 +339,16 @@ var ComponentGenerator = {
             container.removeChild(container.childNodes[n-1]);
             n--;
         }
+    },
+    getMultiselectValue: function(select) {        
+        var ops = select.options;
+        var selected = [];
+        for (var i=0; i<ops.length; ++i) {
+            if (ops[i].selected) {
+                selected.push(ops[i].value);
+            }
+        }
+        return selected;
     }
+
 };

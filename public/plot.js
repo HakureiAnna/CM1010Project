@@ -29,13 +29,22 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
         // function used to repopulate plot settings menu when a new plot type is set
         dataSet: dataSet,
         // get list of selected data series names
-        updateData: function() {
+        updateData: function(altData=null) {
             var data = [];
-            for (var i=0; i<parent.data.length; ++i) {
-                data.push({
-                    text: parent.data[i],
-                    value: parent.data[i],
-                });
+            if (altData) {                
+                for (var i=0; i<altData.length; ++i) {
+                    data.push({
+                        text: altData[i],
+                        value: altData[i],
+                    });
+                }
+            } else {
+                for (var i=0; i<parent.data.length; ++i) {
+                    data.push({
+                        text: parent.data[i],
+                        value: parent.data[i],
+                    });
+                }
             }
             this.dataSeriesTemplate[0].options = data;
         },     

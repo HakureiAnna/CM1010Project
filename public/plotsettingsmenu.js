@@ -41,7 +41,7 @@ function PlotSettingsMenu(parent, menuId) {
             handlers: [
                 {
                     type: 'change',
-                    target: 'drp' + menuId + 'Plot',
+                    target: 1,
                     // handler for when a new plot is selcted
                     handler: function() {
                         var selection = getDropdownValue(menuId+ 'Plot');
