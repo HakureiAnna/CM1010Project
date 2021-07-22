@@ -21,6 +21,7 @@ function setup() {
 
   // add plots to data visualizer
   dataVisualizer.addPlot(XYPlot(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
+  dataVisualizer.addPlot(Piechart(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
 
   // set menus 
   dataVisualizer.dataSourceMenu = DataSourceMenu(dataVisualizer, 'DataSourceMenu');

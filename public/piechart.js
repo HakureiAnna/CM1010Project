@@ -1,7 +1,7 @@
 /*
     concrete line plot class.
 */
-function XYPlot(parent, settingsMenuId, templateMenuId) {
+function Piechart(parent, settingsMenuId, templateMenuId) {
     /* 
         list of possible plot settings currently set statically
     */
@@ -237,7 +237,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
     // initialize based plot object
     return Plot(
         parent,
-        'XY Plot',
+        'Pie Chart',
         // settings
         [
             {

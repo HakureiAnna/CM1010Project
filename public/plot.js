@@ -38,7 +38,44 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
                 });
             }
             this.dataSeriesTemplate[0].options = data;
-        },        
+        },     
+        
+        // function used to get plot setitngs menu settings
+        getSettings: function(settingsMenuId) {
+            var settings = [];
+            var c = document.getElementById(settingsMenuId + 'Container');
+            //var prefix = parent.rowOrColumn=='row'? 'Row ': 'Column ';
+            for (var i=2; i<c.childNodes.length; ++i) {
+                var ct = c.childNodes[i].childNodes[1].value;
+                if (i==2) {
+                    ct = this.parent.data.indexOf(ct);
+                }
+                settings.push(ct);
+            }
+            return settings;
+        },
+        // function used to get list of data series names
+        getData: function(templateMenuId) {        
+            var data = [];
+            var c = document.getElementById(templateMenuId + 'Container');
+            for (var i = 3; i<c.childNodes.length; ++i) {
+                // each data series's container
+                var ct = c.childNodes[i].childNodes[1].childNodes[0];
+                var datum = [];
+                for (var j=0; j<ct.childNodes.length; ++j) {
+                    var v = ct.childNodes[j].childNodes[1].value;
+                    if (v == '') {
+                        datum = null;
+                        break;
+                    }
+                    datum.push(v);
+                }
+                if (datum != null) {
+                    data.push(datum);
+                }
+            }
+            return data;
+        },
     };
 
     // initialize sub types in template
