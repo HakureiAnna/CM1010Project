@@ -76,10 +76,38 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
             }
             return data;
         },
+        // compute margin based on current plot windows dimensions
+        computeMargin: function(margin) {
+            var left = margin * 2;
+            var right = width - margin * 2;
+            var bottom = height - margin * 2;
+            var top = margin * 2;
+    
+            return {
+                left: left,
+                right: right,
+                bottom: bottom,
+                top: top
+            };
+        },
+        computeRowsAndColumns: function(n) {
+            var elements = Math.ceil(Math.sqrt(n));
+            var cols = elements;
+            var rows = 1;
+            while (cols * rows < n) {
+                rows += 1;
+            }
+            return {
+                rows: rows,
+                cols: cols
+            };
+        },
     };
 
-    // initialize sub types in template
-    loadTypes();
+    if (types) {
+        // initialize sub types in template
+        loadTypes();
+    }
 
     return plot;
 }

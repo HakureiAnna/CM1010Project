@@ -13,19 +13,20 @@ function PlotSettingsMenu(parent, menuId) {
         );
     }
     // used to reset this menu to default  settings
-    var resetSettings = function() {
+    var resetSettings = function(start) {
         var cont = document.getElementById(menuId + 'Container');    
-        var keys = Object.keys(menu.components);
-        var n = keys.length;
-        for (var i=1; i<n; ++i) {
-            menu.removeComponent(keys[i]);
+        var n = cont.childNodes.length;
+        while (n > start) {
+            cont.removeChild(cont.childNodes[n-1]);
+            n = cont.childNodes.length;
         }
     }
     // used to load plot specific settings
-    var loadSettings = function(plot) {
+    var loadSettings = function(plot, start) {
         var settings = parent.plots[plot].settings;
-        for (var i=0; i<settings.length; ++i) {
-            menu.addComponent(settings[i]);
+        var cont = document.getElementById(menuId + 'Container');   
+        for (var i=start; i<settings.length; ++i) {
+            cont.appendChild(ComponentGenerator.generateComponent(menuId, settings[i]));
         }
     }
 
@@ -44,12 +45,12 @@ function PlotSettingsMenu(parent, menuId) {
                     // handler for when a new plot is selcted
                     handler: function() {
                         var selection = getDropdownValue(menuId+ 'Plot');
-                        resetSettings();
+                        resetSettings(2);
                         if (selection == '') {
                             return;
                         }
                         parent.currentPlot = selection;
-                        loadSettings(selection);
+                        loadSettings(selection, 0);
                         parent.plots[parent.currentPlot].dataSet();
                           
                         parent.dataSeriesMenu.reset();         
@@ -63,8 +64,13 @@ function PlotSettingsMenu(parent, menuId) {
     menu.reset = function() {
         var dropdown = document.getElementById('drp' + menuId + 'Plot');
         dropdown.value = '';
-        resetSettings();
+        resetSettings(2);
     };
+
+    menu.load = function(start) {
+        resetSettings(start+2);
+        loadSettings(parent.currentPlot, start);
+    }
     
     return menu;
 }

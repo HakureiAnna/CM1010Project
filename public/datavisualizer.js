@@ -242,6 +242,14 @@ function DataVisualizer() {
          */
         dataLoadError: function() {
             self.infoBar.error('Loading data failed. please try another data source.');
+        },
+        getColumn: function(col) {
+            var retVal = [];
+            for (var i=0; i<self.rawData.getRowCount(); ++i) {
+                var r = self.rawData.getRow(i);
+                retVal.push(r.get(col));                
+            }
+            return retVal;
         }
     };
 }

@@ -20,8 +20,10 @@ function setup() {
   dataVisualizer.setPlotWindow (PlotWindow(dataVisualizer, 'PlotWindow'));
 
   // add plots to data visualizer
-  dataVisualizer.addPlot(XYPlot(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
+  dataVisualizer.addPlot(Barchart(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
   dataVisualizer.addPlot(Piechart(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
+  dataVisualizer.addPlot(Wafflechart(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
+  dataVisualizer.addPlot(XYPlot(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
 
   // set menus 
   dataVisualizer.dataSourceMenu = DataSourceMenu(dataVisualizer, 'DataSourceMenu');

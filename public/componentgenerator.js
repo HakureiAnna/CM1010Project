@@ -297,11 +297,11 @@ var ComponentGenerator = {
         noDefaultOptions: number of options to remain in list after clearing
     */
     modifyDropdown: function(id, options, noDefaultOptions) {        
-        var xaxis = document.getElementById('drp' + id);
-        var n = xaxis.childNodes.length;
+        var drp = document.getElementById('drp' + id);
+        var n = drp.childNodes.length;
         
         while (n > noDefaultOptions) {
-            xaxis.removeChild(xaxis.childNodes[n-1]);
+            drp.removeChild(drp.childNodes[n-1]);
             n--;
         }
 
@@ -309,7 +309,7 @@ var ComponentGenerator = {
             var option = document.createElement('option');
             option.value = options[i];
             option.innerHTML = options[i];
-            xaxis.appendChild(option);
+            drp.appendChild(option);
         }
     },
     /*
