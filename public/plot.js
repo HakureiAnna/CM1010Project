@@ -58,6 +58,13 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
                 var ct = c.childNodes[i].childNodes[1].value;
                 if (i==2) {
                     ct = this.parent.data.indexOf(ct);
+                } else if (c.childNodes[i].childNodes[1].multiple) {
+                    ct = [];
+                    for (var j=0; j<c.childNodes[i].childNodes[1].options.length; ++j) {
+                        if (c.childNodes[i].childNodes[1].options[j].selected) {
+                            ct.push(c.childNodes[i].childNodes[1].options[j].value);
+                        }
+                    }
                 }
                 settings.push(ct);
             }
@@ -73,7 +80,7 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
                 var datum = [];
                 for (var j=0; j<ct.childNodes.length; ++j) {
                     var v = ct.childNodes[j].childNodes[1].value;
-                    if (v == '') {
+                    if (v == 'default') {
                         datum = null;
                         break;
                     }
