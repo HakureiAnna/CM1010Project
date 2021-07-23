@@ -21,7 +21,7 @@ function DataSeriesMenu(parent, menuId) {
             handlers: [
                 {
                     type: 'click',
-                    target: 'btn' + menuId + 'Plot',
+                    target: 0,
                     handler: function() {
                         if (parent.currentPlot != '') {
                             parent.gallery.reset();   
@@ -39,7 +39,7 @@ function DataSeriesMenu(parent, menuId) {
             handlers: [
                 {
                     type: 'click',
-                    target: 'btn' + menuId + 'DataSeriesCounterUp',
+                    target: 2,
                     // handler for when the add button is pressed                    
                     handler: function() {  
                         // guard to check if current plot is set
@@ -61,7 +61,7 @@ function DataSeriesMenu(parent, menuId) {
                 },
                 {
                     type: 'click',
-                    target: 'btn' + menuId + 'DataSeriesCounterDown',
+                    target: 3,
                     // handler for when the remove button is pressed
                     handler: function() {
                         if (count > 0) {

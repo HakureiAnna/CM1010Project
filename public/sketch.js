@@ -67,3 +67,7 @@ function draw() {
     }
   }
 }
+
+// function mouseMoved() {
+//   console.log(mouseX, mouseY);
+// }

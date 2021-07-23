@@ -6,7 +6,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         list of possible plot settings currently set statically
     */
     // plot margins    
-    var margin = 35;
+    var marginSize = 35;
     // length of tick mark
     var tick = 5;
     // no. of sub divisions per division
@@ -301,7 +301,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         function() {
             var settings = this.getSettings(settingsMenuId);
             var data = this.getData(templateMenuId);
-            var margin = this.computeMargin();
+            var margin = this.computeMargin(marginSize);
             var xMaxMin = computeRange(getXMaxMin(settings[0]), margin.right, margin.left);
             var maxMin = computeRange(getMaxMin(data), margin.bottom, margin.top);
 

@@ -59,7 +59,7 @@ function DataSourceMenu(parent, menuId) {
             handlers: [
                 {
                     type: 'click',
-                    target: 'btn' + menuId + 'GetData',
+                    target: 0,
                     handler: function() {
                         var sourceType = getRadioButtonValue(menuId + 'SourceType');
                         if (sourceType == null) {

@@ -6,254 +6,134 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
         list of possible plot settings currently set statically
     */
     // plot margins    
-    var margin = 35;
-    // length of tick mark
-    var tick = 5;
-    // no. of sub divisions per division
-    var subDivisions = 5;
-    // ticker threshold to determine whether to output tick text at edges
-    var tickerThreshold = 0.05;
-
-    // list of sub types
-    var types = {
-        line: {
-            // plotting function for a data series with type set to line
-            plot: function(data, xData, margin, xMaxMin, maxMin) {
-                var d = parent.rawData;
-                var n = d.getRowCount();
-                var row = d.getRow(0);
-                var prevX = map(row.getNum(xData), 
-                    xMaxMin.min, xMaxMin.max, margin.left, margin.right);;
-                var prevY = map(row.getNum(parent.data.indexOf(data[0])), 
-                    maxMin.min, maxMin.max, margin.bottom, margin.top);
-                stroke(data[2]);
-                for (var i=1; i<n; ++i) {
-                    row = d.getRow(i);
-                    var currX = map(row.getNum(xData), 
-                        xMaxMin.min, xMaxMin.max, margin.left, margin.right);
-                    var currY = map(row.getNum(parent.data.indexOf(data[0])),    
-                        maxMin.min, maxMin.max, margin.bottom, margin.top);
-                    line(prevX, prevY, currX, currY);
-                    prevX = currX;
-                    prevY = currY;
-                }
-            },
-            // template of options for a data series with type set to line
-            template: [
-                {
-                    type: 'colorPicker',
-                    id: 'LineColor',
-                    label: 'Line Color:',
-                },
-            ]
-        }
-    };
+    var marginSize = 10;
+    var textSpace = 50;
+    var barSpace = 10;
+    var axisSpace = 30;
+    var tickSize = 5;
+    var tickIntervals = 4;
+    var textOffset = 12;
+    var selectedCol = '';
 
     var self = this;
 
-    // compute the plot window x-axis limits
-    var getXMaxMin = function(xData) {
-        var min = Number.MAX_VALUE;
-        var max = Number.MIN_VALUE;
-        var n = parent.rawData.getRowCount();
-        for (var i=0; i<n; ++i) {
-            var row = parent.rawData.getRow(i);
-            var x = row.getNum(xData);
-            if (x > max) {
-                max = x;
-            }
-            if (x < min) {
-                min = x;
-            }
-        }
-        return {
-            max: max,
-            min: min
-        };
-    };
-
-    // compute the plot window y-axis limits
-    var getMaxMin = function(data) {
-        var min = Number.MAX_VALUE;
-        var max = Number.MIN_VALUE;
-        var n = parent.rawData.getRowCount();
-        for (var i=0; i<n; ++i) {
-            var row = parent.rawData.getRow(i);
-            for (var j=0; j<data.length; ++j) {   
-                var x = row.getNum(parent.data.indexOf(data[j][0]));
-                if (x > max) {
-                    max = x;
-                }
-                if (x < min) {
-                    min = x;
-                }
-            }
-        }
-
-
-        return {
-            max: max,
-            min: min,
-        };
-    };
-
-    // compute plotting data (units and subunits)
-    var computeRange = function(maxMin, max, min) {
-        var range = maxMin.max - maxMin.min + 1;
-        var unit = Math.pow(10, Math.floor(Math.log10(range)));
-        maxMin.unit = unit;
-        maxMin.subUnit = unit / subDivisions;
-
-        return maxMin;
-    };
-
-    // compute margin based on current plot windows dimensions
-    var computeMargin = function() {
-        var left = margin * 2;
-        var right = width - margin * 2;
-        var bottom = height - margin * 2;
-        var top = margin * 2;
-
-        return {
-            left: left,
-            right: right,
-            bottom: bottom,
-            top: top
-        };
-    };
-
-    /*
-        draw axis function that dynamically determines if to draw the tick text at the
-        edge of the axes. This is determined based on how close the edges are to drawn tickers at unit divides.
-    */
-    var drawAxis = function(xMaxMin, maxMin, margin) { 
+    var drawAxis = function(margin) {
         stroke(0);
-        textSize(12);
-        textStyle(NORMAL);
-
-        line(margin.left, margin.bottom, margin.right, margin.bottom);
-        
-        var xStart = xMaxMin.min;
-        var x = Math.ceil(xMaxMin.min/xMaxMin.unit) * xMaxMin.unit;
-        var pos = 0;
-        var str = '';
-        var xOffset = 0;
-        var yOffset;
-        if ((x - xStart)/xMaxMin.unit > tickerThreshold) {
-            line(pos, margin.bottom, pos, margin.bottom + tick);
-            pos = map(xStart, xMaxMin.min, xMaxMin.max, margin.left, margin.right);
-            str = parseInt(xStart).toString();
-            xOffset = -textWidth(str)/2;
-            yOffset = tick * 2 + textAscent(str);
-            text(str, pos + xOffset, margin.bottom + yOffset);
-        }
-  
-
-        while (x <= xMaxMin.max) {
-            pos = map(x, xMaxMin.min, xMaxMin.max, margin.left, margin.right);
-            line(pos, margin.bottom, pos, margin.bottom + tick);
-            str = parseInt(x).toString();
-            xOffset = -textWidth(str)/2;
-            yOffset = tick * 2 + textAscent(str);
-            text(str, pos + xOffset, margin.bottom + yOffset);
-            x += xMaxMin.unit;
-        }
-
-        var xEnd = xMaxMin.max;
-        x -= xMaxMin.unit;
-        if ((xEnd - x) /xMaxMin.unit > tickerThreshold) {
-            pos = map(xEnd, xMaxMin.min, xMaxMin.max, margin.left, margin.right);
-            line(pos, margin.bottom, pos, margin.bottom + tick);
-            str = parseInt(xEnd).toString();
-            xOffset = -textWidth(str)/2;
-            yOffset = tick * 2 + textAscent(str);
-            text(str, pos + xOffset, margin.bottom + yOffset);
-        }
-
-        line(margin.left, margin.top, margin.left, margin.bottom);
-
-        var yStart = maxMin.min;
-        var y = Math.ceil(maxMin.min/maxMin.unit) * maxMin.unit;
-        if ((y - yStart)/maxMin.unit > tickerThreshold) {
-            pos = map(yStart, maxMin.min, maxMin.max, margin.bottom, margin.top);
-            line(margin.left - tick, pos, margin.left, pos);
-            str = parseInt(yStart).toString();
-            xOffset = -textWidth(str) - tick * 2;
-            yOffset = textAscent(str)/2;
-            text(str, margin.left + xOffset, pos + yOffset);
-        }
-
-        y = Math.ceil(maxMin.min/maxMin.unit) * maxMin.unit;
-        while (y <= maxMin.max) {
-            pos = map(y, maxMin.min, maxMin.max, margin.bottom, margin.top);
-            line(margin.left - tick, pos, margin.left, pos);
-            str = parseInt(y).toString();
-            xOffset = -textWidth(str) - tick * 2;
-            yOffset = textAscent(str)/2;
-            text(str, margin.left + xOffset, pos + yOffset);
-            y += maxMin.unit;
-        }   
-
-        yEnd  = maxMin.max;
-        y -= maxMin.unit;
-        if ((yEnd - y) /maxMin.unit > tickerThreshold) {
-            pos = map(yEnd, maxMin.min, maxMin.max, margin.bottom, margin.top);
-            line(margin.left - tick, pos, margin.left, pos);
-            str = parseInt(yEnd).toString();
-            xOffset = -textWidth(str) - tick * 2;
-            yOffset = textAscent(str)/2;
-            text(str, margin.left + xOffset, pos + yOffset);
+        var left = margin.left + textSpace;
+        var base = margin.bottom - axisSpace;
+        line(left, base, margin.right, base);
+        for (var i=0; i<=tickIntervals; ++i) {
+            var v = parseInt(i/tickIntervals * 100);
+            var vStr = v.toString() + '%';
+            var x = map(v, 0, 100, left, margin.right);
+            line(x, base, x, base+tickSize);
+            var offset = -textWidth(vStr)/2;
+            text(vStr, x+offset, base+tickSize + textOffset);
         }
     };
 
-    /*
-        function used to draw the grid
-    */
-    var drawGrid = function(xMaxMin, maxMin, margin) {
-        stroke(128);
+    var barify = function(data, margin, settings) {
+        var total = 0;
+        var row = null;
+        var dataset = [];
         
-        var x = Math.ceil(xMaxMin.min/xMaxMin.subUnit) * xMaxMin.subUnit;
-        var pos;
-        while (x <= xMaxMin.max) {
-            pos = map(x, xMaxMin.min, xMaxMin.max, margin.left, margin.right);
-            line(pos, margin.top, pos, margin.bottom);
-            x += xMaxMin.subUnit;
+        // extract relevant row
+        for (var i=0; i<parent.rawData.getRowCount(); ++i) {
+            var r = parent.rawData.getRow(i);
+            if (r.get(selectedCol) == data) {
+                row = r;
+                break;
+            }
         }
-        x = xMaxMin.max;
-        pos = map(x, xMaxMin.min, xMaxMin.max, margin.left, margin.right);
-        line(pos, margin.top, pos, margin.bottom);
+        // extract relevant proportions and compute total
+        for (var i=0; i<parent.rawData.getColumnCount(); ++i) {
+            var c = row.get(i);
+            if (c != data) {    
+                var val = row.getNum(i); 
+                dataset.push(val);
+                total += val;
+            }
+        }
+
         
-        var y = Math.ceil(maxMin.min/maxMin.subUnit) * maxMin.subUnit;
-        while (y <= maxMin.max) {
-            pos = map(y, maxMin.min, maxMin.max, margin.bottom, margin.top);
-            line(margin.left, pos, margin.right, pos);
-            y += maxMin.subUnit;
+        fill(0);
+        text(data, margin.left, margin.top + (margin.bottom - margin.top)/2);
+        var currX = 0;
+
+        for (var i=0; i<dataset.length; ++i) {
+            var x1 = map(currX, 0, total, margin.left + textSpace, margin.right);
+            currX += dataset[i];
+            var x2 = map(currX, 0, total, margin.left + textSpace, margin.right);
+            fill(settings[i+2]);
+            rect(x1, margin.top, x2-x1, margin.bottom-margin.top);
         }
-        y = maxMin.max;
-        pos = map(y, maxMin.min, maxMin.max, margin.bottom, margin.top);
-        line(margin.left, pos, margin.right, pos);
     };
   
     // initialize based plot object
-    return Plot(
+    var plot = Plot(
         parent,
         'Bar Chart',
         // settings
         [
             {
                 type: 'dropDown',
-                label: 'X-Axis Data Series:',
-                id: 'XAxisDataSeries',
-                default: 'Select data series for x-axis',
+                label: 'Data Row/ Column:',
+                id: 'DataRowColumn',
+                default: 'Select row containing data',
                 options: [],
                 handlers: [
+                    {
+                        type: 'change',
+                        target: 1,
+                        handler: function(e) {
+                            var v = e.target.value;
+                            
+                            if (v == 'default') {
+                                return;
+                            }
+                            selectedCol = v;
+                            
+                            var options = parent.getColumn(selectedCol);
+                            plot.updateData(options);
+
+                            parent.dataSeriesMenu.reset();         
+                            parent.gallery.reset();      
+                        }
+                    }
                 ]                
             },
             {
-                type: 'checkbox',
-                label: 'Show Grid',
-                id: 'Grid'
-            }
+                type: 'dropDown',
+                label: 'Proportions:',
+                id: 'Proportions',
+                default: null,
+                multi: true,
+                options: [],
+                handlers: [
+                    {
+                        type: 'change',
+                        target: 1,
+                        handler: function(e) {
+                            // remove all except the first 2 settings
+                            var n = plot.settings.length;
+                            plot.settings.splice(2, n-2);
+
+                            // add colorpickers for each proportion
+                            var proportions = ComponentGenerator.getMultiselectValue(e.target);
+                            for (var i=0; i<proportions.length; ++i) {
+                                plot.settings.push(
+                                    {
+                                        type: 'colorPicker',
+                                        label: proportions[i] + ':',
+                                        id: proportions[i]
+                                    },
+                                );
+                            }
+                            parent.plotSettingsMenu.load(2);
+                        },
+                    },
+                ]                
+            },
         ],
         // data series template
         [
@@ -264,60 +144,43 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
                 default: 'Select Data Series',
                 options: null,
             },
-            {
-                type: 'dropDown',
-                label: 'Type:',
-                id: 'Type',
-                default: 'Select Type',
-                options: [],
-                handlers: [
-                    {
-                        type: 'change',
-                        target: 1,
-                        handler: function(e) {
-                            var container = e.target.parentNode.parentNode;
-                            var cName = container.id.substring(0,container.id.length-9);
-                            
-                            //var cId = cName.substring(templateMenuId.length + 10);
-
-                            ComponentGenerator.clearContainer(container, 2);
-                            var t = e.target.value;
-                            if (t == '') {
-                                return;
-                            }
-                            var type = types[t];
-                            for (var i=0; i<type.template.length; ++i) {
-                                var c = ComponentGenerator.generateComponent(cName, type.template[i]);
-                                container.appendChild(c);
-                            }
-                        },
-                    },
-                ]
-            },
         ],
         // types
-        types,
+        null,
         // plot
         function() {
+            background(255);
+
             var settings = this.getSettings(settingsMenuId);
             var data = this.getData(templateMenuId);
-            var margin = this.computeMargin();
-            var xMaxMin = computeRange(getXMaxMin(settings[0]), margin.right, margin.left);
-            var maxMin = computeRange(getMaxMin(data), margin.bottom, margin.top);
+            var margin = this.computeMargin(marginSize);
+            
+            drawAxis(margin);
 
-            background(255);
-            drawAxis(xMaxMin, maxMin, margin);
+            margin.bottom -= axisSpace;
 
-            if (settings[1] == 'on') {
-                drawGrid(xMaxMin, maxMin, margin);
-            }
-
+            var h = margin.bottom - margin.top;
+            var barH = (h - barSpace * (data.length - 1))/data.length;
+            var currY = margin.top;
             for (var i=0; i<data.length; ++i) {
-                types[data[i][1]].plot(data[i], settings[0], margin, xMaxMin, maxMin);
-            }
+
+                barify(data[i][0], 
+                    {
+                        left: margin.left,
+                        right: margin.right,
+                        top: currY,
+                        bottom: currY + barH
+                    }, settings);
+                currY += barH + barSpace;
+            }            
+
         },
         // dataSet
         function() {
-            ComponentGenerator.modifyDropdown(settingsMenuId + 'XAxisDataSeries', parent.data, 1);
+            ComponentGenerator.modifyDropdown(settingsMenuId + 'DataRowColumn', parent.data, 1);
+            ComponentGenerator.modifyDropdown(settingsMenuId + 'Proportions', parent.data, 1);
         });
+
+
+        return plot;
 }

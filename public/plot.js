@@ -29,13 +29,22 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
         // function used to repopulate plot settings menu when a new plot type is set
         dataSet: dataSet,
         // get list of selected data series names
-        updateData: function() {
+        updateData: function(altData=null) {
             var data = [];
-            for (var i=0; i<parent.data.length; ++i) {
-                data.push({
-                    text: parent.data[i],
-                    value: parent.data[i],
-                });
+            if (altData) {                
+                for (var i=0; i<altData.length; ++i) {
+                    data.push({
+                        text: altData[i],
+                        value: altData[i],
+                    });
+                }
+            } else {
+                for (var i=0; i<parent.data.length; ++i) {
+                    data.push({
+                        text: parent.data[i],
+                        value: parent.data[i],
+                    });
+                }
             }
             this.dataSeriesTemplate[0].options = data;
         },     
@@ -49,6 +58,13 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
                 var ct = c.childNodes[i].childNodes[1].value;
                 if (i==2) {
                     ct = this.parent.data.indexOf(ct);
+                } else if (c.childNodes[i].childNodes[1].multiple) {
+                    ct = [];
+                    for (var j=0; j<c.childNodes[i].childNodes[1].options.length; ++j) {
+                        if (c.childNodes[i].childNodes[1].options[j].selected) {
+                            ct.push(c.childNodes[i].childNodes[1].options[j].value);
+                        }
+                    }
                 }
                 settings.push(ct);
             }
@@ -64,7 +80,7 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
                 var datum = [];
                 for (var j=0; j<ct.childNodes.length; ++j) {
                     var v = ct.childNodes[j].childNodes[1].value;
-                    if (v == '') {
+                    if (v == 'default') {
                         datum = null;
                         break;
                     }
