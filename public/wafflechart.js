@@ -43,7 +43,7 @@ function Wafflechart(parent, settingsMenuId, templateMenuId) {
         var step = 1/max;
 
         stroke(0);
-        for (var i=0; i<rows; ++i) {
+        for (var i=0; i<rows; ++i) {            
             for (var j=0; j<cols; ++j) {
                 while (currVal < currCell) {                        
                     currVal += dataSet[k]/total;

@@ -245,11 +245,20 @@ function DataVisualizer() {
         },
         getColumn: function(col) {
             var retVal = [];
+            col = self.normalizeColumn(col);
             for (var i=0; i<self.rawData.getRowCount(); ++i) {
                 var r = self.rawData.getRow(i);
                 retVal.push(r.get(col));                
             }
             return retVal;
+        },
+        normalizeColumn: function(col) {
+            if (col.indexOf('Column ') == 0) {
+                col = parseInt(col.substring('Column '.length))-1;
+            } else if (col.indexOf('Row ') == 0) {
+                col = parseInt(col.substring('Row '.length))-1;
+            }
+            return col;
         }
     };
 }

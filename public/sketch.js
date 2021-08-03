@@ -21,6 +21,7 @@ function setup() {
 
   // add plots to data visualizer
   dataVisualizer.addPlot(Barchart(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
+  dataVisualizer.addPlot(GraphPlot(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'))
   dataVisualizer.addPlot(Piechart(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
   dataVisualizer.addPlot(Wafflechart(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
   dataVisualizer.addPlot(XYPlot(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
