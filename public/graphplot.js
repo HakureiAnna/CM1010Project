@@ -10,9 +10,10 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
     var destination = '';
     var source = '';
     var weight = '';
+    var nodeKeys = null;
     var nodes = null;
+    var selectedKeys = null;
     var graph = null;
-    var edges = null;
     var margin = null;
     var nodeSizeFactor = 0.8;
 
@@ -33,12 +34,13 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
             intermediate.add(d);
         });
 
-        nodes = Array.from(intermediate);
+        nodeKeys = Array.from(intermediate);
+
         plot.settings[3].options = [];
-        for (var i=0; i<nodes.length; ++i) {
+        for (var i=0; i<nodeKeys.length; ++i) {
             plot.settings[3].options.push({
-                value: nodes[i],
-                text: nodes[i]
+                value: nodeKeys[i],
+                text: nodeKeys[i]
             });
         }
         parent.plotSettingsMenu.load(3);
@@ -46,16 +48,27 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
 
     var computePlotData = function(marginSize) {        
         var drp = document.getElementById('drp' + settingsMenuId + plot.settings[3].id);
-        var selected = ComponentGenerator.getMultiselectValue(drp);
-        // create new graph
-        graph = {};
-        for (var i=0; i<selected.length; ++i) {
-            graph[selected[i]] = {
-                node: selected[i],
+        var tmp = ComponentGenerator.getMultiselectValue(drp);
+        nodes = {};
+        for (var i=0; i<tmp.length; ++i) {
+            nodes[tmp[i]] = {
+                index: i,
                 x: 0,
                 y: 0,
-                links: []
+                node: tmp[i]
             };
+        }
+        selectedKeys = Object.keys(nodes);
+
+
+        // create new graph
+        graph = [];
+        var row = [];
+        for (var i=0; i<tmp.length; ++i) {
+            row.push(0);
+        }
+        for (var i=0; i<tmp.length; ++i) {
+            graph.push(row.slice());
         }
 
         // fill links
@@ -69,34 +82,27 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
             var key = row.get(src);
             var link = row.get(dst);
             var cost = row.getNum(wgt);
-            if (key in graph && link in graph) {
-                graph[key].links.push({
-                    link: link,
-                    weight: cost,
-                    color: 'black'
-                });
+            if (key in nodes && link in nodes) {
+                graph[nodes[key].index][nodes[link].index] = cost;
+                graph[nodes[link].index][nodes[key].index] = cost;
             }
         }
 
-        console.log(graph);
-
         // fill graph with plot window positions
         margin = plot.computeMargin(marginSize);
-        var keys = Object.keys(graph);
-        var n = keys.length;
-        var rnc = plot.computeRowsAndColumns(n);
+        var rnc = plot.computeRowsAndColumns(graph.length);
 
         var xStep = (margin.right - margin.left)/rnc.cols;
         var yStep = (margin.bottom - margin.top)/rnc.rows;        
         var xPos = margin.left + xStep/2;
         var yPos = margin.top + yStep/2;
         var d = xStep * nodeSizeFactor;
-        var tmp = yStep * nodeSizeFactor;        
+        tmp = yStep * nodeSizeFactor;        
         d = (d > tmp? tmp: d);
       
-        for (var k=0; k<n; ++k) {
-            graph[keys[k]].x = xPos;
-            graph[keys[k]].y = yPos;
+        for (var k=0; k< selectedKeys.length; ++k) {
+            nodes[selectedKeys[k]].x = xPos;
+            nodes[selectedKeys[k]].y = yPos;
             xPos += xStep;
             if (xPos >= margin.right) {
                 yPos += yStep;
@@ -112,20 +118,18 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
     var drawNodes = function(plotData) {
         background(255);
         
-        var keys = Object.keys(graph);
-        for (var i=0; i<keys.length; ++i) {
-            var a = graph[keys[i]];
-            for (var j=0; j<graph[keys[i]].links.length; ++j) {
-                var link = graph[keys[i]].links[j];
-                var b = graph[link.link];
-                stroke(link.color);
-                line(a.x, a.y, b.x, b.y);
+        // draw edges
+        for (var i=0; i<graph.length; ++i) {
+            for (var j=i+1; j<graph[i].length; ++j) {
+                if (graph[i][j] > 0) {
+                    line(nodes[selectedKeys[i]].x, nodes[selectedKeys[i]].y, nodes[selectedKeys[j]].x, nodes[selectedKeys[j]].y);
+                }
             }
         }
 
-
-        for (var i=0; i<keys.length; ++i) {
-            var node = graph[keys[i]];
+        // draw nodes
+        for (var i=0; i<selectedKeys.length; ++i) {
+            var node = nodes[selectedKeys[i]];
             var tW = textWidth(node.node);
             ellipse(node.x, node.y, plotData.diameter, plotData.diameter);
             text(node.node, node.x-tW/2, node.y);
