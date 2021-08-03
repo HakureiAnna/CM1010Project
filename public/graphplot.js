@@ -15,7 +15,12 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
     var selectedKeys = null;
     var graph = null;
     var margin = null;
-    var nodeSizeFactor = 0.8;
+    var nodeSizeFactor = 0.6;
+    var diameter = 0;
+    var strokeWidth = 8;
+    var fontSize = 10;
+    var textSizeFactor = 0.9;
+    var colors = null;
 
     var self = this;
 
@@ -98,11 +103,13 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
         var yPos = margin.top + yStep/2;
         var d = xStep * nodeSizeFactor;
         tmp = yStep * nodeSizeFactor;        
-        d = (d > tmp? tmp: d);
+        diameter = (d > tmp? tmp: d);
       
         for (var k=0; k< selectedKeys.length; ++k) {
-            nodes[selectedKeys[k]].x = xPos;
-            nodes[selectedKeys[k]].y = yPos;
+            var shakeX = (Math.random()-0.5) * (1-nodeSizeFactor) * xStep;
+            var shakeY = (Math.random()-0.5) * (1-nodeSizeFactor) * yStep;
+            nodes[selectedKeys[k]].x = xPos + shakeX;
+            nodes[selectedKeys[k]].y = yPos + shakeY;
             xPos += xStep;
             if (xPos >= margin.right) {
                 yPos += yStep;
@@ -110,29 +117,157 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
             }
         }
 
-        return {
-            diameter: d,
-        };
     };
 
-    var drawNodes = function(plotData) {
+    var draw = function() {
         background(255);
         
         // draw edges
+        strokeWeight(strokeWidth);
         for (var i=0; i<graph.length; ++i) {
             for (var j=i+1; j<graph[i].length; ++j) {
                 if (graph[i][j] > 0) {
+                    if (colors) {
+                        if (colors[i][j] === '#0') {
+                            stroke(0);
+                        } else {
+                            stroke(colors[i][j]);
+                        }
+                    }
                     line(nodes[selectedKeys[i]].x, nodes[selectedKeys[i]].y, nodes[selectedKeys[j]].x, nodes[selectedKeys[j]].y);
                 }
             }
         }
 
         // draw nodes
+        strokeWeight(1);
+        stroke(0);
+        textSize(fontSize);
         for (var i=0; i<selectedKeys.length; ++i) {
             var node = nodes[selectedKeys[i]];
             var tW = textWidth(node.node);
-            ellipse(node.x, node.y, plotData.diameter, plotData.diameter);
-            text(node.node, node.x-tW/2, node.y);
+            ellipse(node.x, node.y, diameter, diameter);
+            text(node.node, node.x-tW/2, node.y+fontSize/3);
+        }
+    };
+
+    var computeMinDistance = function(distances, nodeUsed) {
+        var m = Number.MAX_VALUE;
+        var mIndex = -1;
+        for (var i=0; i<selectedKeys.length; ++i) {
+            if (!nodeUsed[i] && distances[i] <= m) {
+                m = distances[i];
+                mIndex = i;
+            }            
+        }
+        return mIndex;
+    };
+
+    var computePaths = function(data) {
+        var paths = [];
+        for (var i=0; i<data.length; ++i) {   
+            var path = computePath(data[i][0], data[i][1]);
+            if (path.length > 0) {
+                paths.push({
+                    path: path,
+                    color: data[i][2]
+                });
+            }
+        }
+
+        colors = [];
+        var count = [];
+        var tmp = [];
+        for (var i=0; i<selectedKeys.length; ++i) {
+            tmp.push(0);
+        }
+        for (var i=0; i<selectedKeys.length; ++i) {
+            colors.push(tmp.slice());
+            count.push(tmp.slice());
+        }
+        
+        for (var i=0; i<paths.length; ++i) {
+            for (var j=0; j<paths[i].path.length-1; ++j) {
+                var a = paths[i].path[j];
+                var b = paths[i].path[j+1];
+                if (a > b) {
+                    var tmp = a;
+                    a = b;
+                    b = tmp;
+                }
+                var color = parseInt(paths[i].color.substring(1),16);
+                colors[a][b] = (colors[a][b] * count[a][b] + color)/(count[a][b]+1);
+                count[a][b]++;
+            }
+        }
+        for (var i=0; i<colors.length; ++i) {
+            for (var j=0; j<colors[i].length; ++j) {
+                colors[i][j] = '#' + Math.round(colors[i][j]).toString(16);
+            }
+        }
+    }
+
+    var computePath = function(src, dst) {
+        var distances = [];
+        var nodeUsed = [];
+        var prevNodes = [];
+
+        for (var i=0; i<selectedKeys.length; ++i) {
+            distances.push(Number.MAX_VALUE);
+            nodeUsed.push(false);
+            prevNodes.push(-1);
+        }
+        distances[nodes[src].index] = 0;
+
+        for (var i=0; i<selectedKeys.length-1; ++i) {
+            var nextNode = computeMinDistance(distances, nodeUsed);
+
+            nodeUsed[nextNode] = true;
+
+
+            for (var j=0; j<selectedKeys.length; ++j) {
+                if (!nodeUsed[j] && graph[nextNode][j] &&
+                    distances[nextNode] + graph[nextNode][j] < distances[j]) {
+                    prevNodes[j] = nextNode;
+                    distances[j] = distances[nextNode] + graph[nextNode][j];
+                }
+            }
+        }
+        var path = [];
+        var curr = nodes[dst].index;
+        while (1) {
+            if (curr == -1) {
+                path = [];
+                break;
+            }
+            path.push(curr);
+            if (curr == nodes[src].index) {
+                break;
+            }
+            curr = prevNodes[curr];
+        }
+        return path;
+    };
+
+
+    var computeFontSize = function() {
+        var maxLen = 0;
+        var maxIndex = 0;
+        for (var i=0; i<selectedKeys.length; ++i) {
+            if (selectedKeys[i].length > maxLen) {
+                maxLen = selectedKeys[i].length;
+                maxIndex = i;
+            }
+        }
+
+        fontSize = 10;
+        var prevFontSize = fontSize-1;
+
+        textSize(fontSize);
+        while (textWidth(selectedKeys[maxIndex]) < diameter * textSizeFactor) {
+            prevFontSize = fontSize;
+            fontSize++;
+            textSize(fontSize);
         }
     };
 
@@ -205,8 +340,22 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                         type: 'change',
                         target: 1,
                         handler: function(e) {
-                            drawNodes(
-                                computePlotData(marginSize));
+                            computePlotData(marginSize);
+                            computeFontSize();
+
+                            var options = [];
+                            for (var i=0; i<selectedKeys.length; ++i) {
+                                options.push({
+                                    value: selectedKeys[i],
+                                    text: selectedKeys[i],
+                                });
+                            }
+                            plot.dataSeriesTemplate[0].options = options;
+                            plot.dataSeriesTemplate[1].options = options;
+                            colors = null;
+                            parent.dataSeriesMenu.reset();
+
+                            draw();
                         }
                     }
                 ]
@@ -241,6 +390,9 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
         null,
         // plot
         function() {
+            var data = plot.getData(templateMenuId);
+            computePaths(data);     
+            draw(); 
         },
         // dataSet
         function() {
