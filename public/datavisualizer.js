@@ -125,10 +125,15 @@ function DataVisualizer() {
             this.plotWindow.setup();
 
             this.infoBar.setup();
+
+            this.toolbar.setup();
             
             for (key in this.sideBars) {
                 this.sideBars[key].setup();
             }
+        },
+        save: function() {
+            this.plotWindow.save();
         },
         /*
             add new sidebar to data visualizer
@@ -141,6 +146,9 @@ function DataVisualizer() {
          */
         setInfoBar: function(infoBar) {
             this.infoBar = infoBar;
+        },
+        setToolbar: function(toolbar) {
+            this.toolbar = toolbar;
         },
         /* 
             set the plot window

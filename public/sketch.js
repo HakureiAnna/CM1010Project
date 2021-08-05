@@ -18,6 +18,7 @@ function setup() {
 
   // plot window setup
   dataVisualizer.setPlotWindow (PlotWindow(dataVisualizer, 'PlotWindow'));
+  dataVisualizer.setToolbar(Toolbar(parent, 'toolbar'));
 
   // add plots to data visualizer
   dataVisualizer.addPlot(Barchart(dataVisualizer, 'GraphSettingsMenu', 'DataSeriesMenu'));
