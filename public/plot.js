@@ -65,6 +65,8 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
                             ct.push(c.childNodes[i].childNodes[1].options[j].value);
                         }
                     }
+                } else if (c.childNodes[i].childNodes[1].type == 'checkbox') {
+                    ct = c.childNodes[i].childNodes[1].checked;
                 }
                 settings.push(ct);
             }

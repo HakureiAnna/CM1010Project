@@ -34,7 +34,10 @@ var ComponentGenerator = {
                 break;
             case 'colorPicker':
                 comp = this.generateColorPicker(id, component.label);
-                break;                
+                break;               
+            case 'slider':
+                comp = this.generateSlider(id, component.label, component.options);
+                break;
         }
         // add event handlers
         if (component.handlers != undefined) {
@@ -127,6 +130,32 @@ var ComponentGenerator = {
         
         return container;
     },
+    generateSlider: function(id, labelText, options) {
+        var container = this.generateDiv();
+
+        container.appendChild(this.generateLabel(labelText, id));
+
+        var range = document.createElement('input');
+        range.className = 'form-control';
+        range.id = 'sld' + TextDecoder;
+        range.type = 'range';
+        range.min = options.min;
+        range.max = options.max;
+        range.value = options.min;
+        container.appendChild(range);
+
+        var lblValue = document.createElement('label');
+        lblValue.innerHTML = range.min;
+        container.appendChild(lblValue);
+
+        range.onchange = (e) => {
+            lblValue.innerHTML = e.target.value;
+        };
+
+
+
+        return container;
+    },
     /*
         generator for color picker
         id: color picker id
@@ -182,6 +211,7 @@ var ComponentGenerator = {
         checkbox.className = 'form-check-input';
         checkbox.type = 'checkbox';
         checkbox.id = 'chk' + id;
+        checkbox.value = 'off';
         container.appendChild(checkbox);
 
         return container;

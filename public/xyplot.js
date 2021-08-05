@@ -14,11 +14,21 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
     // ticker threshold to determine whether to output tick text at edges
     var tickerThreshold = 0.05;
 
+    var getRGBHex = (s) => parseInt(s.substring(1), 16);
+    var getRGBComponents = (hex) => {
+        return {
+            r: int(hex/256/256%256),
+            g: int(hex/256%256),
+            b: int(hex%256)
+        }
+    };
+
     // list of sub types
     var types = {
         line: {
             // plotting function for a data series with type set to line
-            plot: function(data, xData, margin, xMaxMin, maxMin) {
+            plot: function(data, settings, margin, xMaxMin, maxMin) {
+                var xData = settings[0];
                 var d = parent.rawData;
                 var n = d.getRowCount();
                 var row = d.getRow(0);
@@ -46,7 +56,101 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                     label: 'Line Color:',
                 },
             ]
-        }
+        },
+        scatter: {
+            // plotting function for a data series with type set to line
+            plot: function(data, settings, margin, xMaxMin, maxMin) {
+
+                var xData = settings[0];
+                var d = parent.rawData;
+                var n = d.getRowCount();
+                var row = d.getRow(0);
+                stroke(data[2]);
+                for (var i=0; i<n; ++i) {
+                    row = d.getRow(i);
+                    var currX = map(row.getNum(xData), 
+                        xMaxMin.min, xMaxMin.max, margin.left, margin.right);
+                    var currY = map(row.getNum(parent.data.indexOf(data[0])),    
+                        maxMin.min, maxMin.max, margin.bottom, margin.top);
+                    var diameter = parseInt(data[3]);
+                    ellipse(currX, currY, diameter, diameter);
+                }
+            },
+            // template of options for a data series with type set to line
+            template: [
+                {
+                    type: 'colorPicker',
+                    id: 'PointColor',
+                    label: 'Point Color:',
+                },
+                {
+                    type: 'slider',
+                    id: 'PointSize',
+                    label: 'Point Size:',
+                    options: {
+                        min: 5,
+                        max: 20,
+                    },
+                    handlers: [
+
+                    ]
+                },
+            ]
+        },
+        gradient: {
+            // plotting function for a data series with type set to line
+            plot: function(data, settings, margin, xMaxMin, maxMin) {
+                var minColor = getRGBComponents(getRGBHex(data[2]));
+                var maxColor = getRGBComponents(getRGBHex(data[3]));
+                var alpha = parseInt(data[4]);
+                
+                var xData = settings[0];
+                var d = parent.rawData;
+                var n = d.getRowCount();
+                var row = d.getRow(0);
+                var prevX = map(row.getNum(xData), 
+                    xMaxMin.min, xMaxMin.max, margin.left, margin.right);
+                noStroke();
+                var h = margin.bottom - margin.top;
+                for (var i=0; i<n; ++i) {
+                    row = d.getRow(i);
+                    var currX = map(row.getNum(xData), 
+                        xMaxMin.min, xMaxMin.max, margin.left, margin.right);
+                    var delta = map(row.getNum(parent.data.indexOf(data[0])),
+                        maxMin.min, maxMin.max, 0, 100);
+                    var c = {
+                        r: map(delta, 0, 100, minColor.r, maxColor.r),
+                        g: map(delta, 0, 100, minColor.g, maxColor.g),
+                        b: map(delta, 0, 100, minColor.b, maxColor.b),
+                    };
+                    fill(c.r, c.g, c.b, alpha);
+                    rect(prevX, margin.top, currX - prevX, h);
+                    prevX = currX;
+                }
+            },
+            // template of options for a data series with type set to line
+            template: [
+                {
+                    type: 'colorPicker',
+                    id: 'MinColor',
+                    label: 'Min Color:',
+                },
+                {
+                    type: 'colorPicker',
+                    id: 'MaxColor',
+                    label: 'Max Color:',
+                },
+                {
+                    type: 'slider',
+                    id: 'Alpha',
+                    label: 'Alpha:',
+                    options: {
+                        min: 0,
+                        max: 255,
+                    },
+                },
+            ]
+        },
     };
 
     var self = this;
@@ -105,21 +209,6 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         maxMin.subUnit = unit / subDivisions;
 
         return maxMin;
-    };
-
-    // compute margin based on current plot windows dimensions
-    var computeMargin = function() {
-        var left = margin * 2;
-        var right = width - margin * 2;
-        var bottom = height - margin * 2;
-        var top = margin * 2;
-
-        return {
-            left: left,
-            right: right,
-            bottom: bottom,
-            top: top
-        };
     };
 
     /*
@@ -306,14 +395,14 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
             var maxMin = computeRange(getMaxMin(data), margin.bottom, margin.top);
 
             background(255);
-            drawAxis(xMaxMin, maxMin, margin);
 
-            if (settings[1] == 'on') {
+            if (settings[1]) {
                 drawGrid(xMaxMin, maxMin, margin);
             }
+            drawAxis(xMaxMin, maxMin, margin);
 
             for (var i=0; i<data.length; ++i) {
-                types[data[i][1]].plot(data[i], settings[0], margin, xMaxMin, maxMin);
+                types[data[i][1]].plot(data[i], settings, margin, xMaxMin, maxMin);
             }
         },
         // dataSet
