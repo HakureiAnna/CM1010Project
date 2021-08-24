@@ -1,6 +1,11 @@
-/*
-    Data Source Menu that is used to choose between external/ internal data, configure the way the data is imported
- */
+/**************************************************************
+ * File: public/ui/datasourcemenu.js
+ * Description: Data Source Menu that is used to choose between
+ * external/ internal data, configure the way the data is
+ * imported.
+ * Author: Liu Anna
+ **************************************************************/
+
 function DataSourceMenu(parent, menuId) {
     // initialize base class
     var menu = Menu(parent, menuId, [

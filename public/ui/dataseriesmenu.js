@@ -1,7 +1,10 @@
-/*
-    Data series mnenu class
-    this class is in charge of maintaing the list of data series to be ploted.
- */
+/**************************************************************
+ * File: public/ui/dataseriesmenu.js
+ * Description: Data series menu class, in charge of maintaining 
+ * the list of data series to be ploted.
+ * Author: Liu Anna
+ **************************************************************/
+
 function DataSeriesMenu(parent, menuId) {
     // no. of data series
     var count = 0;

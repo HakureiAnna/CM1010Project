@@ -1,6 +1,9 @@
-/*
- Workhorse for the templating system
- */
+/**************************************************************
+ * File: public/utils/componentgenerator.js
+ * Description:  Workhorse for the templating system
+ * Author: Liu Anna
+ **************************************************************/
+
 var ComponentGenerator = {
     /* 
         main function to component generation
@@ -130,6 +133,12 @@ var ComponentGenerator = {
         
         return container;
     },
+    /*
+        generator for tslider
+        id: textbox id
+        labelText: text for label attached to the text box
+        options: settings for the min, max values 
+     */
     generateSlider: function(id, labelText, options) {
         var container = this.generateDiv();
 
@@ -370,6 +379,10 @@ var ComponentGenerator = {
             n--;
         }
     },
+    /*
+        get the selected value for a multisect component
+        select: DOMElement of the multiselect
+    */
     getMultiselectValue: function(select) {        
         var ops = select.options;
         var selected = [];

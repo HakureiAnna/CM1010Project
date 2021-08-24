@@ -1,12 +1,20 @@
-/*
-    concrete line plot class.
-*/
+/**************************************************************
+ * File: public/plots/graphplot.js
+ * Description: Concrete implementation of the graph visualization plot type.
+ * Author: Liu Anna
+ **************************************************************/
+
 function GraphPlot(parent, settingsMenuId, templateMenuId) {
     /* 
         list of possible plot settings currently set statically
     */
-    // plot margins    
-    var marginSize = 35;
+    var marginSize = 35;        // margin size from the extreme to the plottable area
+    var nodeSizeFactor = 0.6;   // factor used for computing of diameter from no. of nodes
+    var strokeWidth = 8;        // edge width
+    var fontSize = 10;          // fontSize for node name
+    var textSizeFactor = 0.9;   // text factor used to compute text size based on the diameter
+    // list of member properties used during the operation of the graph plot
+    var diameter = 0;           
     var destination = '';
     var source = '';
     var weight = '';
@@ -15,15 +23,10 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
     var selectedKeys = null;
     var graph = null;
     var margin = null;
-    var nodeSizeFactor = 0.6;
-    var diameter = 0;
-    var strokeWidth = 8;
-    var fontSize = 10;
-    var textSizeFactor = 0.9;
     var colors = null;
 
-    var self = this;
-
+    // function used to compute a list of unique node values from the
+    // selected row/ columns for both the source and destination nodes
     var updateNodesList = function() {
         if (destination === '' || source === '' || weight === '') {
             return;
@@ -51,6 +54,10 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
         parent.plotSettingsMenu.load(3);
     };
 
+    // recompute adjacency matrix for selected nodes so it can be used for plotting
+    // and shortest path computation, also computes the diameter for the nodes
+    // using the smallest value computed from both the xStep (horizontal) and yStep (vertical)
+    // step values computed from the no. of nodes to be visualized
     var computePlotData = function(marginSize) {        
         var drp = document.getElementById('drp' + settingsMenuId + plot.settings[3].id);
         var tmp = ComponentGenerator.getMultiselectValue(drp);
@@ -64,7 +71,6 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
             };
         }
         selectedKeys = Object.keys(nodes);
-
 
         // create new graph
         graph = [];
@@ -146,11 +152,15 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
         for (var i=0; i<selectedKeys.length; ++i) {
             var node = nodes[selectedKeys[i]];
             var tW = textWidth(node.node);
+            fill(255);
             ellipse(node.x, node.y, diameter, diameter);
+            fill(0);
             text(node.node, node.x-tW/2, node.y+fontSize/3);
         }
     };
 
+    // utility function used to select the index of the node with 
+    // the shortest distance to the current node that is still unused
     var computeMinDistance = function(distances, nodeUsed) {
         var m = Number.MAX_VALUE;
         var mIndex = -1;
@@ -163,6 +173,10 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
         return mIndex;
     };
 
+    // function used to compute shortest paths between a number of
+    // source/ destination node pairs and also compute the color used
+    // for each edge as an average between the different colors of each
+    // shortest path utilizing the edge
     var computePaths = function(data) {
         var paths = [];
         for (var i=0; i<data.length; ++i) {   
@@ -175,6 +189,8 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
             }
         }
 
+        // color computation that computes an average based on the color
+        // selected for each shortest path that are using the edge
         colors = [];
         var count = [];
         var tmp = [];
@@ -207,6 +223,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
         }
     }
 
+    // function used to compute shortest path between two nodes 
     var computePath = function(src, dst) {
         var distances = [];
         var nodeUsed = [];
@@ -249,7 +266,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
         return path;
     };
 
-
+    // function used to compute the font size based on the text with the longest length
     var computeFontSize = function() {
         var maxLen = 0;
         var maxIndex = 0;
@@ -278,6 +295,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
         'Graph Plot',
         // settings
         [
+            // drop down for selecting the row/ column containing the source node
             {
                 type: 'dropDown',
                 label: 'Source:',
@@ -285,6 +303,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                 default: 'Select row/ column containing the source.',
                 options: [],
                 handlers: [
+                    // update the node list when source row/ column changes
                     {
                         type: 'change',
                         target: 1,
@@ -295,6 +314,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                     }
                 ]                
             },
+            // drop down for selecting the row/ column containing the destination node
             {
                 type: 'dropDown',
                 label: 'Destination:',
@@ -302,6 +322,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                 default: 'Select row/ column containing the destination.',
                 options: [],
                 handlers: [
+                    // update the node list when destination row/ column changes
                     {
                         type: 'change',
                         target: 1,
@@ -312,6 +333,8 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                     },
                 ]                
             },
+            // drop down for selecting the row/ column containing the weight for the edge 
+            // between the source and destination
             {
                 type: 'dropDown',
                 label: 'Weight:',
@@ -319,6 +342,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                 default: 'Select row/ column containing the weight.',
                 options: [],
                 handlers: [
+                    // update node list when weight row/ column changes
                     {
                         type: 'change',
                         target: 1,
@@ -329,6 +353,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                     }
                 ]
             },
+            // multiselect drop down used to select actual nodes to draw in the visualization area
             {
                 type: 'dropDown',
                 label: 'Nodes to Display:',
@@ -336,6 +361,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                 multi: true,
                 options: [],
                 handlers: [
+                    // recompute plot data, font size and redraw the selected nodes
                     {
                         type: 'change',
                         target: 1,
@@ -363,6 +389,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
         ],
         // data series template
         [
+            // drop down to select source node for this shortest path data series
             {
                 type: 'dropDown',
                 label: 'Source:',
@@ -372,6 +399,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                 handlers: [
                 ]
             },
+            // drop down to select destination node for this shortest path data series
             {
                 type: 'dropDown',
                 label: 'Destination:',
@@ -380,21 +408,23 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                 options: [],
                 handlers: [
                 ]
-            },{
+            },
+            // drop down to select color for this shortest path data series
+            {
                 type: 'colorPicker',
                 label: 'Highlight Color:',
                 id: 'HighlightColor',
             },
         ],
-        // types
+        // types (no subtypes)
         null,
-        // plot
+        // plot function used to compute shortest path and visualize all the selected paths
         function() {
             var data = plot.getData(templateMenuId);
             computePaths(data);     
             draw(); 
-        },
-        // dataSet
+        }, 
+        // dataSet function to update the options list for each related drop down
         function() {
             ComponentGenerator.modifyDropdown(settingsMenuId + this.settings[0].id, parent.data, 1);
             ComponentGenerator.modifyDropdown(settingsMenuId + this.settings[1].id, parent.data, 1);

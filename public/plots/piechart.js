@@ -1,16 +1,17 @@
-/*
-    concrete line plot class.
-*/
+/**************************************************************
+ * File: public/plots/piechart.js
+ * Description: Concrete implementation of the pie chart plot type.
+ * Author: Liu Anna
+ **************************************************************/
+
 function Piechart(parent, settingsMenuId, templateMenuId) {
     /* 
         list of possible plot settings currently set statically
     */
-    // plot margins    
-    var marginSize = 35;
-    var subMargin = 10;
+    var marginSize = 35;    // margin size for from the visualization area to the extreme
+    var subMargin = 10;     // margin size between each pie plot
 
-    var self = this;
-
+    // function used to plot a pie chart for a particular selected data series
     var piefy = function(datum, margin, settings) {
         var dataset = [];
         var total = 0;
@@ -44,6 +45,7 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
         'Pie Chart',
         // settings
         [
+            // drop down for selecting the row/ column that provides the partitioning data
             {
                 type: 'dropDown',
                 label: 'Partition By:',
@@ -51,6 +53,8 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
                 default: 'Select Row/ Column to partition by.',
                 options: [],
                 handlers: [
+                    // when the drop down selection changes, repopulate the plot settings menu with color 
+                    // pickers for each partition from the selected column
                     {
                         type: 'change',
                         target: 1,
@@ -79,6 +83,7 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
         ],
         // data series template
         [
+            // drop down for selecting a data series to draw a pie chart from
             {
                 type: 'dropDown',
                 label: 'Data Series:',
@@ -89,14 +94,16 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
         ],
         // types
         null,
-        // plot
+        // plot function used draw pie charts for each selected data series
         function() {
             background(255);
 
+            // setup and initialization
             var settings = this.getSettings(settingsMenuId);
             var data = this.getData(templateMenuId);
             var margin = this.computeMargin(marginSize);
 
+            // computation of values necessary for positioning and sizing each piechart
             var rowsNCols = this.computeRowsAndColumns(data.length);
             var w = margin.right - margin.left;
             var h = margin.bottom - margin.top; 
@@ -106,6 +113,8 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
             var xStart = margin.left;
             var yStart = margin.top;
             
+            // iterate over selected data series to plot pie charts in each 'cell' within the
+            // formerly computed no. of rows and columns
             for (var i=0; i<data.length; ++i) {
                 piefy(data[i][0], 
                     {
@@ -122,7 +131,7 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
                 }
             }
         },
-        // dataSet
+        // dataSet function to update related dropdown lists when new data is loaded
         function() {
             ComponentGenerator.modifyDropdown(settingsMenuId + 'PartitionBy', parent.data, 1);
         });

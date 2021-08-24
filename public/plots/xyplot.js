@@ -1,18 +1,16 @@
-/*
-    concrete line plot class.
-*/
+/**************************************************************
+ * File: public/plots/xyplot.js
+ * Description: Concrete implementation of the xy (line) plot types.
+ * Author: Liu Anna
+ **************************************************************/
 function XYPlot(parent, settingsMenuId, templateMenuId) {
     /* 
         list of possible plot settings currently set statically
-    */
-    // plot margins    
-    var marginSize = 35;
-    // length of tick mark
-    var tick = 5;
-    // no. of sub divisions per division
-    var subDivisions = 5;
-    // ticker threshold to determine whether to output tick text at edges
-    var tickerThreshold = 0.05;
+    */ 
+    var marginSize = 35;        // plot margins   
+    var tick = 5;               // length of tick mark
+    var subDivisions = 5;       // no. of sub divisions per division
+    var tickerThreshold = 0.05; // ticker threshold to determine whether to output tick text at edges
 
     var getRGBHex = (s) => parseInt(s.substring(1), 16);
     var getRGBComponents = (hex) => {
@@ -25,6 +23,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
 
     // list of sub types
     var types = {
+        // simple line plot
         line: {
             // plotting function for a data series with type set to line
             plot: function(data, settings, margin, xMaxMin, maxMin) {
@@ -50,6 +49,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
             },
             // template of options for a data series with type set to line
             template: [
+                // color picker for the line color
                 {
                     type: 'colorPicker',
                     id: 'LineColor',
@@ -57,8 +57,9 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                 },
             ]
         },
+        // scatter plot type
         scatter: {
-            // plotting function for a data series with type set to line
+            // plotting function for a data series with type set to scatter type
             plot: function(data, settings, margin, xMaxMin, maxMin) {
 
                 var xData = settings[0];
@@ -78,11 +79,13 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
             },
             // template of options for a data series with type set to line
             template: [
+                // color picker for the each 'dot' of the scatter plot
                 {
                     type: 'colorPicker',
                     id: 'PointColor',
                     label: 'Point Color:',
                 },
+                // slider used to determine the 'dot' size of the scatter plot
                 {
                     type: 'slider',
                     id: 'PointSize',
@@ -97,8 +100,9 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                 },
             ]
         },
+        // horizontal 'gradient plot' for the xy plot
         gradient: {
-            // plotting function for a data series with type set to line
+            // plotting function for a data series with type set to horizontal gradient plot
             plot: function(data, settings, margin, xMaxMin, maxMin) {
                 var minColor = getRGBComponents(getRGBHex(data[2]));
                 var maxColor = getRGBComponents(getRGBHex(data[3]));
@@ -118,6 +122,9 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                         xMaxMin.min, xMaxMin.max, margin.left, margin.right);
                     var delta = map(row.getNum(parent.data.indexOf(data[0])),
                         maxMin.min, maxMin.max, 0, 100);
+                    // compute the color based on the current value point and
+                    // from a gradient computed as split R, G, B values for a
+                    // more gradual change in color from min. to max. value colors
                     var c = {
                         r: map(delta, 0, 100, minColor.r, maxColor.r),
                         g: map(delta, 0, 100, minColor.g, maxColor.g),
@@ -130,16 +137,20 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
             },
             // template of options for a data series with type set to line
             template: [
+                // color picker for the color of the minimum value
                 {
                     type: 'colorPicker',
                     id: 'MinColor',
                     label: 'Min Color:',
                 },
+                // color picker for the color of the maximum value
                 {
                     type: 'colorPicker',
                     id: 'MaxColor',
                     label: 'Max Color:',
                 },
+                // slider used to select an alpha for the current gradient, this
+                // allows a no. of gradient plots to be placed over each other 
                 {
                     type: 'slider',
                     id: 'Alpha',
@@ -152,8 +163,6 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
             ]
         },
     };
-
-    var self = this;
 
     // compute the plot window x-axis limits
     var getXMaxMin = function(xData) {
@@ -193,7 +202,6 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                 }
             }
         }
-
 
         return {
             max: max,
@@ -329,6 +337,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         'XY Plot',
         // settings
         [
+            // drop down to select the row/ column that represents data for the horizontal axis
             {
                 type: 'dropDown',
                 label: 'X-Axis Data Series:',
@@ -338,14 +347,16 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                 handlers: [
                 ]                
             },
+            // checkbox to determine if to draw a ggrid
             {
                 type: 'checkbox',
                 label: 'Show Grid',
                 id: 'Grid'
             }
         ],
-        // data series template
+        // data series template (in addition to specifc setting of each sub plot type)
         [
+            // drop down to select data series
             {
                 type: 'dropDown',
                 label: 'Data Series:',
@@ -353,6 +364,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                 default: 'Select Data Series',
                 options: null,
             },
+            // drop down used to select the sub plot type
             {
                 type: 'dropDown',
                 label: 'Type:',
@@ -360,6 +372,8 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                 default: 'Select Type',
                 options: [],
                 handlers: [
+                    // when the sub plot type is changed, repopulate the data series 
+                    // with settings relevant the sub plot type
                     {
                         type: 'change',
                         target: 1,
@@ -386,8 +400,9 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         ],
         // types
         types,
-        // plot
-        function() {
+        // plot function
+        function() { 
+            // setup and initialization
             var settings = this.getSettings(settingsMenuId);
             var data = this.getData(templateMenuId);
             var margin = this.computeMargin(marginSize);
@@ -396,16 +411,19 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
 
             background(255);
 
+            // draw (or not) the grid based on settings
             if (settings[1]) {
                 drawGrid(xMaxMin, maxMin, margin);
             }
             drawAxis(xMaxMin, maxMin, margin);
 
+            // iterate over the selected data series and call their sub plot type plot function for
+            // actual plotting
             for (var i=0; i<data.length; ++i) {
                 types[data[i][1]].plot(data[i], settings, margin, xMaxMin, maxMin);
             }
         },
-        // dataSet
+        // dataSet function to update relevant drop downs based on newly loaded data
         function() {
             ComponentGenerator.modifyDropdown(settingsMenuId + 'XAxisDataSeries', parent.data, 1);
         });

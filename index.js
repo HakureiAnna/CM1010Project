@@ -1,3 +1,10 @@
+/**************************************************************
+ * File: index.js
+ * Description: Minimalistic express server used for bypassing 
+ * CORS.
+ * Author: Liu Anna
+ **************************************************************/
+
 const express = require('express');
 const axios = require('axios');
 

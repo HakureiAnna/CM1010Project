@@ -1,22 +1,23 @@
-/*
-    concrete line plot class.
-*/
+/**************************************************************
+ * File: public/plots/barchart.js
+ * Description: Barchart plot type implementation file.
+ * Author: Liu Anna
+ **************************************************************/
+
 function Barchart(parent, settingsMenuId, templateMenuId) {
     /* 
         list of possible plot settings currently set statically
     */
-    // plot margins    
-    var marginSize = 10;
-    var textSpace = 50;
-    var barSpace = 10;
-    var axisSpace = 30;
-    var tickSize = 5;
-    var tickIntervals = 4;
-    var textOffset = 12;
-    var selectedCol = '';
+    var marginSize = 10;    // margin from the extremes of the plot area
+    var textSpace = 50;     // left most position for text drawing
+    var barSpace = 10;      // interval between each drawn 'bar'
+    var axisSpace = 30;     // space used for axis drawing
+    var tickSize = 5;       // size of a tick line
+    var tickIntervals = 4;  // no. of ticks to draw
+    var textOffset = 12;    // vertical text offset for prper text placement
+    var selectedCol = '';   // selected column 
 
-    var self = this;
-
+    // function used to draw the axis and ticks
     var drawAxis = function(margin) {
         stroke(0);
         var left = margin.left + textSpace;
@@ -32,6 +33,7 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
         }
     };
 
+    // actual drawing function used to the bars
     var barify = function(data, margin, settings) {
         var total = 0;
         var row = null;
@@ -57,9 +59,11 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
 
         
         fill(0);
+        // write the bar heading to the left of the graph
         text(data, margin.left, margin.top + (margin.bottom - margin.top)/2);
         var currX = 0;
 
+        // drawing the actual bar
         for (var i=0; i<dataset.length; ++i) {
             var x1 = map(currX, 0, total, margin.left + textSpace, margin.right);
             currX += dataset[i];
@@ -75,6 +79,8 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
         'Bar Chart',
         // settings
         [
+            // drop down used to select the row/ column containing the data for
+            // the selectable data series
             {
                 type: 'dropDown',
                 label: 'Data Row/ Column:',
@@ -82,6 +88,7 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
                 default: 'Select row containing data',
                 options: [],
                 handlers: [
+                    // when drop down selection changed, update the selectable data series
                     {
                         type: 'change',
                         target: 1,
@@ -102,6 +109,7 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
                     }
                 ]                
             },
+            // drop down used to represent the actual proportions to divide the selected data series by
             {
                 type: 'dropDown',
                 label: 'Proportions:',
@@ -110,6 +118,8 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
                 multi: true,
                 options: [],
                 handlers: [
+                    // when drop down selection changed, repopulate the plot settings to allow setting
+                    // of color for each proportion type
                     {
                         type: 'change',
                         target: 1,
@@ -137,6 +147,7 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
         ],
         // data series template
         [
+            // drop down for selection of a bar to visualize
             {
                 type: 'dropDown',
                 label: 'Data Series:',
@@ -151,17 +162,24 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
         function() {
             background(255);
 
+            // setup and initialization
             var settings = this.getSettings(settingsMenuId);
             var data = this.getData(templateMenuId);
             var margin = this.computeMargin(marginSize);
             
+            // draw the axis
             drawAxis(margin);
 
+            // set aside more space for drawing the horizontal axis
+            // reducing the usable visualization area
             margin.bottom -= axisSpace;
 
+            // actual height of plottable area
             var h = margin.bottom - margin.top;
             var barH = (h - barSpace * (data.length - 1))/data.length;
             var currY = margin.top;
+            // for loop to iterate over each data series and plot them
+            // using the barify function
             for (var i=0; i<data.length; ++i) {
 
                 barify(data[i][0], 
@@ -175,7 +193,7 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
             }            
 
         },
-        // dataSet
+        // dataSet function to update the UI when new data is laoded
         function() {
             ComponentGenerator.modifyDropdown(settingsMenuId + 'DataRowColumn', parent.data, 1);
             ComponentGenerator.modifyDropdown(settingsMenuId + 'Proportions', parent.data, 1);

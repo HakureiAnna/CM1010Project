@@ -1,6 +1,9 @@
-/*
-    helper function to obtain the dimensions of the DOM element
-*/
+/**************************************************************
+ * File: public/utils/utilities.js
+ * Description: File to hold utility functions not belonging else where
+ * Author: Liu Anna
+ **************************************************************/
+
 function getDimensions(id) {
     var element = document.getElementById(id);
     var rect = element.getBoundingClientRect();

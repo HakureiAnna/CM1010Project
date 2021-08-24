@@ -1,7 +1,13 @@
-/*
-    Info Bar class is used as a simplified one-line logging system to inform the user of the current application status
-    Note: the display style (e.g. red text for error message) is set using CSS class defined in styles.css
- */
+/**************************************************************
+ * File: public/ui/infobar.js
+ * Description:   Info Bar class is used as a simplified 
+ * one-line logging system to inform the user of the
+ * current application status.
+ * Note: the display style (e.g. red text for error message) 
+ * is set using CSS class defined in styles.css.
+ * Author: Liu Anna
+ **************************************************************/
+
 function InfoBar(parent, infoBarId) {
     var messageOutput = null;
     return {
@@ -30,6 +36,10 @@ function InfoBar(parent, infoBarId) {
         error: function(msg) {
             messageOutput.class('messageOutputError');
             messageOutput.html('ERROR: ' + msg);
+        },
+        // function used to clear the info bar
+        clear: function() {
+            messageOutput.html('');
         }
     };
 }

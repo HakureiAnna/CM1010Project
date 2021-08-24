@@ -1,10 +1,13 @@
-/*
-    SideBar class used to implement collapsible side bars.
- */
+/**************************************************************
+ * File: public/ui/plotwindow.js
+ * Description: SideBar class used to implement collapsible 
+ * side bars.
+ * Author: Liu Anna
+ **************************************************************/
+
 function SideBar(parent, isVertical,
     sideBarId, sideBarShowClass, sideBarHideClass, 
-    mainSectionShowClass, mainSectionHideClass,
-    btnShowText, btnHideText) {
+    mainSectionShowClass, mainSectionHideClass) {
     // reference to base object
     var sideBar = null;
     // used to toggle collapse status of side bar

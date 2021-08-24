@@ -1,6 +1,9 @@
-/*
-    this is the main class for the new application.
- */
+/**************************************************************
+ * File: public/ui/datavisualizer.js
+ * Description: This is the main class for the new application.
+ * Author: Liu Anna
+ **************************************************************/
+
 function DataVisualizer() {
     // self pointer
     var self = null;
@@ -244,6 +247,8 @@ function DataVisualizer() {
             }
 
             self.rawData = data;
+
+            self.infoBar.clear();
         },
         /*
             callback on data loading erro
@@ -251,6 +256,7 @@ function DataVisualizer() {
         dataLoadError: function() {
             self.infoBar.error('Loading data failed. please try another data source.');
         },
+        // helper function to get the data from a particular column in the loaded data
         getColumn: function(col) {
             var retVal = [];
             col = self.normalizeColumn(col);
@@ -260,6 +266,8 @@ function DataVisualizer() {
             }
             return retVal;
         },
+        // function used normalize a column name for a system named column (when loaded data does 
+        // not have header)
         normalizeColumn: function(col) {
             if (col.indexOf('Column ') == 0) {
                 col = parseInt(col.substring('Column '.length))-1;

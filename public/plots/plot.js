@@ -1,9 +1,13 @@
-/*
- Base Plot type class. This is used to provide a frame of reference for easier development of further plot types.
- */
+/**************************************************************
+ * File: public/plots/plot.js
+ * Description:  Base Plot type class. This is used to provide a frame of reference for easier development of further plot types.
+ * Author: Liu Anna
+ **************************************************************/
+
 function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) {    
-    var self = this;
     // used to add variations of the plot (types) to the array for dropdown of sub types
+    // currently only truly used in xyplot as for the other plot types, no real 'subtype' 
+    // has been found to be useful and thus not implemented.
     var loadTypes= function() {
         for (var type in types) {
             dataSeriesTemplate[1].options.push({
@@ -108,6 +112,9 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
                 top: top
             };
         },
+        // utility function used to compute the no. of rows and columns 
+        // necessary for producing the visualization based on the number
+        // of data series, n, selected
         computeRowsAndColumns: function(n) {
             var elements = Math.ceil(Math.sqrt(n));
             var cols = elements;

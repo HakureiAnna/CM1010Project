@@ -1,21 +1,20 @@
-/*
-    concrete line plot class.
-*/
+/**************************************************************
+ * File: public/plots/wafflechart.js
+ * Description: Concrete implementation of the waffle chart plot type.
+ * Author: Liu Anna
+ **************************************************************/
 function Wafflechart(parent, settingsMenuId, templateMenuId) {
     /* 
         list of possible plot settings currently set statically
-    */
-    // plot margins    
-    var marginSize = 10;
-    var categories = null;
-    var rows = 10;
-    var cols = 10;
+    */   
+    var marginSize = 10;    // margin space between plot area and extremes
+    var rows = 10;          // no. of rows per waffle chart
+    var cols = 10;          // no. of columns per waffle chart
     var epsilon = 0.1;
     var waffleSpace = 10;
+    var categories = null;
 
-    var self = this;
-
-
+    // draw waffle for a single selected data series
     var wafflify = function(data, margin, settings) {
         var dataSet = [];
         
@@ -68,6 +67,7 @@ function Wafflechart(parent, settingsMenuId, templateMenuId) {
         'Waffle Chart',
         // settings
         [
+            // multiselect dropdown to select reference rows/ columns to get waffle partitions
             {
                 type: 'dropDown',
                 label: 'Reference(s):',
@@ -76,6 +76,8 @@ function Wafflechart(parent, settingsMenuId, templateMenuId) {
                 multi: true,
                 options: [],
                 handlers: [
+                    // when the reference rows/ columns selection has been changed, repopulate
+                    // the plot settings with color pickers for each unique parititon
                     {
                         type: 'change',
                         target: 1,
@@ -111,6 +113,7 @@ function Wafflechart(parent, settingsMenuId, templateMenuId) {
         ],
         // data series template
         [
+            // drop down to select a data series to draw waffle chart from
             {
                 type: 'dropDown',
                 label: 'Data Series:',
@@ -121,19 +124,23 @@ function Wafflechart(parent, settingsMenuId, templateMenuId) {
         ],
         // types
         null,
-        // plot
+        // plot function
         function() {
             background(255);
 
+            // setup and initialization
             var settings = this.getSettings(settingsMenuId);
             var data = this.getData(templateMenuId);
             var margin = this.computeMargin(marginSize);   
             var rowsAndColumns = this.computeRowsAndColumns(data.length);    
 
+            // computation of values necessary for plotting
             var xStep = (margin.right - margin.left - waffleSpace * (rowsAndColumns.cols - 1))/rowsAndColumns.cols;
             var yStep = (margin.bottom - margin.top - waffleSpace * (rowsAndColumns.rows - 1))/rowsAndColumns.rows;
             var currX = margin.left;
             var currY = margin.top;
+
+            // iterate over selected data series to plot waffle charts from
             for (var i=0; i<data.length; ++i) {
                 wafflify(data[i][0], {
                     left: currX,
@@ -149,7 +156,7 @@ function Wafflechart(parent, settingsMenuId, templateMenuId) {
             }
 
         },
-        // dataSet
+        // dataSet function that updates relevant dropdown when new data is loaded
         function() {
             ComponentGenerator.modifyDropdown(settingsMenuId + this.settings[0].id, parent.data, 1);
         });

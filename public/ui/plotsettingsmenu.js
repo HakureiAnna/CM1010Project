@@ -1,6 +1,10 @@
-/*
-    Plot Settings Menu used for placing settings related to the entire plot
-*/
+/**************************************************************
+ * File: public/ui/plotsettingsmenu.js
+ * Description: Plot Settings Menu used for placing settings 
+ * related to the entire plot.
+ * Author: Liu Anna
+ **************************************************************/
+
 function PlotSettingsMenu(parent, menuId) {
     // list of plot types
     var options = [];
@@ -61,12 +65,18 @@ function PlotSettingsMenu(parent, menuId) {
         },
     ]);
 
+    // function used for resetting the plot settings menu. Removing all extra options
+    // except the graph type drop down which is required for any customized plot
+    // settings menu
     menu.reset = function() {
         var dropdown = document.getElementById('drp' + menuId + 'Plot');
         dropdown.value = '';
         resetSettings(2);
     };
 
+    // function used to load settings from the currently selected plot type
+    // using the parameter start to determine the no. of default settings (unique)
+    // to each plot types to remain in the menu before loading the new settings.
     menu.load = function(start) {
         resetSettings(start+2);
         loadSettings(parent.currentPlot, start);
