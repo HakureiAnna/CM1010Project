@@ -135,8 +135,10 @@ function DataVisualizer() {
                 this.sideBars[key].setup();
             }
         },
-        save: function() {
-            this.plotWindow.save();
+        // function to save the image to file by invoking the
+        // relevant PlotWindow function
+        save: function(path, type) {
+            this.plotWindow.save(path, type);
         },
         /*
             add new sidebar to data visualizer

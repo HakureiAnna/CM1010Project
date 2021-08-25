@@ -32,8 +32,9 @@ function PlotWindow(parent, id) {
             resizeCanvas((abs? 0: this.dimensions.width) + delta.width, (abs? 0: this.dimensions.height) + delta.height);
             this.dimensions = getDimensions(id);
         }, 
-        save: function() {
-            saveCanvas(this.canvas, 'plot', 'png');
+        // save plot to specified path
+        save: function(path, type) {
+            saveCanvas(this.canvas, path, type);
         }
     };
 }
