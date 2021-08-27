@@ -1,12 +1,10 @@
-Follow the following instructions to run the project.
+There are two ways to run this project.
+To enable CORS bypass:
+1. Change into the project directory.
+2. Run npm install, to install the required node modules.
+3. Run node index.js to start the backend server.
+4. Navigate to http://localhost:5555/ to access the application.
 
-1. Change to the project directory.
-2. Run npm install, to install the modules required by the project.
-3. Run node index.js to start the express server.
-
-Note: 
-- Given the word limit, a lot of details of the design cannot be discussed here, please refer to the comments within the code base for further information.
-
-- For references 1-3, since a great number of documentation pages are consulted from these two sources during the development, only an entry point to the documentation is provided, but no. 4 is the actual URI for a particular question and answer on the stackoverflow website that helped greatly for implementing the external data sources.
-
-- The original git support files are removed, the git files currently present are those for a new repository, it is hosted on a private repository on my personal GitHub account (hakurei.anna@gmail.com), I am using the issues system to keep track of progress and functionalities I intend to implement later during the project.
+To run only the application:
+1. Change into the [Project Root]/public
+2. And start the application in the usual fashion for a P5.JS app.
