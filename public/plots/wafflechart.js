@@ -3,11 +3,10 @@
  * Description: Concrete implementation of the waffle chart plot type.
  * Author: Liu Anna
  **************************************************************/
-function Wafflechart(parent, settingsMenuId, templateMenuId) {
+function Wafflechart(parent) {
     /* 
         list of possible plot settings currently set statically
     */   
-    var marginSize = 10;    // margin space between plot area and extremes
     var rows = 10;          // no. of rows per waffle chart
     var cols = 10;          // no. of columns per waffle chart
     var epsilon = 0.1;
@@ -48,7 +47,7 @@ function Wafflechart(parent, settingsMenuId, templateMenuId) {
                     currVal += dataSet[k]/total;
                     k++;
                 }
-                fill(settings[k+1]);
+                fill(settings[k+3]);
                 rect(currX, currY, xStep, yStep);
                 currCell += step;
                 currX += xStep;
@@ -65,6 +64,7 @@ function Wafflechart(parent, settingsMenuId, templateMenuId) {
     var plot = Plot(
         parent,
         'Waffle Chart',
+        10, // marginSize
         // settings
         [
             // multiselect dropdown to select reference rows/ columns to get waffle partitions
@@ -125,18 +125,10 @@ function Wafflechart(parent, settingsMenuId, templateMenuId) {
         // types
         null,
         // plot function
-        function() {
-            background(255);
-
-            // setup and initialization
-            var settings = this.getSettings(settingsMenuId);
-            var data = this.getData(templateMenuId);
-            var margin = this.computeMargin(marginSize);   
-            var rowsAndColumns = this.computeRowsAndColumns(data.length);    
-
+        function(settings, data, margin, rowsNCols) {
             // computation of values necessary for plotting
-            var xStep = (margin.right - margin.left - waffleSpace * (rowsAndColumns.cols - 1))/rowsAndColumns.cols;
-            var yStep = (margin.bottom - margin.top - waffleSpace * (rowsAndColumns.rows - 1))/rowsAndColumns.rows;
+            var xStep = (margin.right - margin.left - waffleSpace * (rowsNCols.cols - 1))/rowsNCols.cols;
+            var yStep = (margin.bottom - margin.top - waffleSpace * (rowsNCols.rows - 1))/rowsNCols.rows;
             var currX = margin.left;
             var currY = margin.top;
 
@@ -158,7 +150,7 @@ function Wafflechart(parent, settingsMenuId, templateMenuId) {
         },
         // dataSet function that updates relevant dropdown when new data is loaded
         function() {
-            ComponentGenerator.modifyDropdown(settingsMenuId + this.settings[0].id, parent.data, 1);
+            ComponentGenerator.modifyDropdown(parent.plotSettingsMenu.id + this.settings[0].id, parent.data, 1);
         });
 
 

@@ -3,16 +3,17 @@
  * Description: Concrete implementation of the xy (line) plot types.
  * Author: Liu Anna
  **************************************************************/
-function XYPlot(parent, settingsMenuId, templateMenuId) {
+function XYPlot(parent) {
     /* 
         list of possible plot settings currently set statically
     */ 
-    var marginSize = 35;        // plot margins   
     var tick = 5;               // length of tick mark
     var subDivisions = 5;       // no. of sub divisions per division
     var tickerThreshold = 0.05; // ticker threshold to determine whether to output tick text at edges
 
+    // get the numerical value from a hexadecimal string
     var getRGBHex = (s) => parseInt(s.substring(1), 16);
+    // break a numerical value into separate hexadecimal RGB values
     var getRGBComponents = (hex) => {
         return {
             r: int(hex/256/256%256),
@@ -27,7 +28,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         line: {
             // plotting function for a data series with type set to line
             plot: function(data, settings, margin, xMaxMin, maxMin) {
-                var xData = settings[0];
+                var xData = settings[2];
                 var d = parent.rawData;
                 var n = d.getRowCount();
                 var row = d.getRow(0);
@@ -62,7 +63,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
             // plotting function for a data series with type set to scatter type
             plot: function(data, settings, margin, xMaxMin, maxMin) {
 
-                var xData = settings[0];
+                var xData = settings[2];
                 var d = parent.rawData;
                 var n = d.getRowCount();
                 var row = d.getRow(0);
@@ -108,7 +109,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                 var maxColor = getRGBComponents(getRGBHex(data[3]));
                 var alpha = parseInt(data[4]);
                 
-                var xData = settings[0];
+                var xData = settings[2];
                 var d = parent.rawData;
                 var n = d.getRowCount();
                 var row = d.getRow(0);
@@ -210,7 +211,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
     };
 
     // compute plotting data (units and subunits)
-    var computeRange = function(maxMin, max, min) {
+    var computeRange = function(maxMin) {
         var range = maxMin.max - maxMin.min + 1;
         var unit = Math.pow(10, Math.floor(Math.log10(range)));
         maxMin.unit = unit;
@@ -335,6 +336,7 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
     return Plot(
         parent,
         'XY Plot',
+        35, // marginSize
         // settings
         [
             // drop down to select the row/ column that represents data for the horizontal axis
@@ -381,8 +383,6 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
                             var container = e.target.parentNode.parentNode;
                             var cName = container.id.substring(0,container.id.length-9);
                             
-                            //var cId = cName.substring(templateMenuId.length + 10);
-
                             ComponentGenerator.clearContainer(container, 2);
                             var t = e.target.value;
                             if (t == '') {
@@ -401,18 +401,13 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         // types
         types,
         // plot function
-        function() { 
+        function(settings, data, margin, rowsNCols) { 
             // setup and initialization
-            var settings = this.getSettings(settingsMenuId);
-            var data = this.getData(templateMenuId);
-            var margin = this.computeMargin(marginSize);
-            var xMaxMin = computeRange(getXMaxMin(settings[0]), margin.right, margin.left);
-            var maxMin = computeRange(getMaxMin(data), margin.bottom, margin.top);
-
-            background(255);
+            var xMaxMin = computeRange(getXMaxMin(settings[2]));
+            var maxMin = computeRange(getMaxMin(data));
 
             // draw (or not) the grid based on settings
-            if (settings[1]) {
+            if (settings[3]) {
                 drawGrid(xMaxMin, maxMin, margin);
             }
             drawAxis(xMaxMin, maxMin, margin);
@@ -425,6 +420,6 @@ function XYPlot(parent, settingsMenuId, templateMenuId) {
         },
         // dataSet function to update relevant drop downs based on newly loaded data
         function() {
-            ComponentGenerator.modifyDropdown(settingsMenuId + 'XAxisDataSeries', parent.data, 1);
+            ComponentGenerator.modifyDropdown(parent.plotSettingsMenu.id + 'XAxisDataSeries', parent.data, 1);
         });
 }

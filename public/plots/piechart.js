@@ -4,11 +4,10 @@
  * Author: Liu Anna
  **************************************************************/
 
-function Piechart(parent, settingsMenuId, templateMenuId) {
+function Piechart(parent) {
     /* 
         list of possible plot settings currently set statically
     */
-    var marginSize = 35;    // margin size for from the visualization area to the extreme
     var subMargin = 10;     // margin size between each pie plot
 
     // function used to plot a pie chart for a particular selected data series
@@ -31,7 +30,7 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
         for (var i=0; i<parent.rawData.getRowCount(); ++i) {            
             var rad = dataset[i] / total * 2 * Math.PI;
 
-            fill(settings[i+1]);
+            fill(settings[i+3]);
             var next = (start + rad) % (2 * Math.PI);
             arc(midX, midY, d, d, start, next);
             start = next;
@@ -42,7 +41,8 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
     // initialize based plot object
     var plot = Plot(
         parent,
-        'Pie Chart',
+        'Pie Chart',        
+        35,    // margin size for from the visualization area to the extreme
         // settings
         [
             // drop down for selecting the row/ column that provides the partitioning data
@@ -64,7 +64,7 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
                             plot.settings.splice(1, n-1);
 
                             // add colorpickers for each in partition by
-                            var partitionBy = document.getElementById('drp' + settingsMenuId + plot.settings[0].id).value;
+                            var partitionBy = document.getElementById('drp' + parent.plotSettingsMenu.id + plot.settings[0].id).value;
                             var partitions = parent.getColumn(partitionBy);
                             for (var i=0; i<partitions.length; ++i) {
                                 plot.settings.push(
@@ -95,16 +95,8 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
         // types
         null,
         // plot function used draw pie charts for each selected data series
-        function() {
-            background(255);
-
-            // setup and initialization
-            var settings = this.getSettings(settingsMenuId);
-            var data = this.getData(templateMenuId);
-            var margin = this.computeMargin(marginSize);
-
-            // computation of values necessary for positioning and sizing each piechart
-            var rowsNCols = this.computeRowsAndColumns(data.length);
+        function(settings, data, margin, rowsNCols) {
+            // computation of values necessary for  positioning and sizing each piechart
             var w = margin.right - margin.left;
             var h = margin.bottom - margin.top; 
             var wPie = w / rowsNCols.cols;
@@ -133,7 +125,7 @@ function Piechart(parent, settingsMenuId, templateMenuId) {
         },
         // dataSet function to update related dropdown lists when new data is loaded
         function() {
-            ComponentGenerator.modifyDropdown(settingsMenuId + 'PartitionBy', parent.data, 1);
+            ComponentGenerator.modifyDropdown(parent.plotSettingsMenu.id + 'PartitionBy', parent.data, 1);
         });
 
     return plot;

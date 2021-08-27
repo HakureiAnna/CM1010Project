@@ -14,6 +14,7 @@ function Menu(parent, menuId, componentData) {
     var menu = {
         // pointer to self
         self: this,
+        id: menuId,
         // reference to data visualizer
         parent: parent,
         // reference to container for hosting the components

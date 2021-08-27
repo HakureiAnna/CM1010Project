@@ -6,6 +6,8 @@
  **************************************************************/
 
 function PlotSettingsMenu(parent, menuId) {
+    var defaultComponentOffset = 4;
+
     // list of plot types
     var options = [];
     for (var p in parent.plots) {
@@ -49,7 +51,7 @@ function PlotSettingsMenu(parent, menuId) {
                     // handler for when a new plot is selcted
                     handler: function() {
                         var selection = getDropdownValue(menuId+ 'Plot');
-                        resetSettings(2);
+                        resetSettings(defaultComponentOffset);
                         if (selection == '') {
                             return;
                         }
@@ -63,6 +65,16 @@ function PlotSettingsMenu(parent, menuId) {
                 }
             ]
         },
+        {
+            type: 'checkbox',
+            label: 'Show Title',
+            id: 'ShowTitle'            
+        },
+        {
+            type: 'checkbox',
+            label: 'Show Legend',
+            id: 'ShowLegend'            
+        },
     ]);
 
     // function used for resetting the plot settings menu. Removing all extra options
@@ -71,14 +83,14 @@ function PlotSettingsMenu(parent, menuId) {
     menu.reset = function() {
         var dropdown = document.getElementById('drp' + menuId + 'Plot');
         dropdown.value = '';
-        resetSettings(2);
+        resetSettings(defaultComponentOffset);
     };
 
     // function used to load settings from the currently selected plot type
     // using the parameter start to determine the no. of default settings (unique)
     // to each plot types to remain in the menu before loading the new settings.
     menu.load = function(start) {
-        resetSettings(start+2);
+        resetSettings(start+defaultComponentOffset);
         loadSettings(parent.currentPlot, start);
     }
     

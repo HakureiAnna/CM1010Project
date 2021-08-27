@@ -4,11 +4,10 @@
  * Author: Liu Anna
  **************************************************************/
 
-function Barchart(parent, settingsMenuId, templateMenuId) {
+function Barchart(parent) {
     /* 
         list of possible plot settings currently set statically
     */
-    var marginSize = 10;    // margin from the extremes of the plot area
     var textSpace = 50;     // left most position for text drawing
     var barSpace = 10;      // interval between each drawn 'bar'
     var axisSpace = 30;     // space used for axis drawing
@@ -68,7 +67,7 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
             var x1 = map(currX, 0, total, margin.left + textSpace, margin.right);
             currX += dataset[i];
             var x2 = map(currX, 0, total, margin.left + textSpace, margin.right);
-            fill(settings[i+2]);
+            fill(settings[i+4]);
             rect(x1, margin.top, x2-x1, margin.bottom-margin.top);
         }
     };
@@ -77,6 +76,7 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
     var plot = Plot(
         parent,
         'Bar Chart',
+        10, // marginSize
         // settings
         [
             // drop down used to select the row/ column containing the data for
@@ -159,13 +159,7 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
         // types
         null,
         // plot
-        function() {
-            background(255);
-
-            // setup and initialization
-            var settings = this.getSettings(settingsMenuId);
-            var data = this.getData(templateMenuId);
-            var margin = this.computeMargin(marginSize);
+        function(settings, data, margin, rowsNCols) {
             
             // draw the axis
             drawAxis(margin);
@@ -195,8 +189,8 @@ function Barchart(parent, settingsMenuId, templateMenuId) {
         },
         // dataSet function to update the UI when new data is laoded
         function() {
-            ComponentGenerator.modifyDropdown(settingsMenuId + 'DataRowColumn', parent.data, 1);
-            ComponentGenerator.modifyDropdown(settingsMenuId + 'Proportions', parent.data, 1);
+            ComponentGenerator.modifyDropdown(parent.plotSettingsMenu.id + 'DataRowColumn', parent.data, 1);
+            ComponentGenerator.modifyDropdown(parent.plotSettingsMenu.id + 'Proportions', parent.data, 1);
         });
 
 

@@ -4,11 +4,10 @@
  * Author: Liu Anna
  **************************************************************/
 
-function GraphPlot(parent, settingsMenuId, templateMenuId) {
+function GraphPlot(parent) {
     /* 
         list of possible plot settings currently set statically
     */
-    var marginSize = 35;        // margin size from the extreme to the plottable area
     var nodeSizeFactor = 0.6;   // factor used for computing of diameter from no. of nodes
     var strokeWidth = 8;        // edge width
     var fontSize = 10;          // fontSize for node name
@@ -59,7 +58,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
     // using the smallest value computed from both the xStep (horizontal) and yStep (vertical)
     // step values computed from the no. of nodes to be visualized
     var computePlotData = function(marginSize) {        
-        var drp = document.getElementById('drp' + settingsMenuId + plot.settings[3].id);
+        var drp = document.getElementById('drp' + parent.plotSettingsMenu.id + plot.settings[3].id);
         var tmp = ComponentGenerator.getMultiselectValue(drp);
         nodes = {};
         for (var i=0; i<tmp.length; ++i) {
@@ -293,6 +292,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
     var plot = Plot(
         parent,
         'Graph Plot',
+        35, // marginSize
         // settings
         [
             // drop down for selecting the row/ column containing the source node
@@ -366,7 +366,7 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
                         type: 'change',
                         target: 1,
                         handler: function(e) {
-                            computePlotData(marginSize);
+                            computePlotData(plot.marginSize);
                             computeFontSize();
 
                             var options = [];
@@ -419,16 +419,15 @@ function GraphPlot(parent, settingsMenuId, templateMenuId) {
         // types (no subtypes)
         null,
         // plot function used to compute shortest path and visualize all the selected paths
-        function() {
-            var data = plot.getData(templateMenuId);
+        function(settings, data, margin, rowsNCols) {
             computePaths(data);     
             draw(); 
         }, 
         // dataSet function to update the options list for each related drop down
         function() {
-            ComponentGenerator.modifyDropdown(settingsMenuId + this.settings[0].id, parent.data, 1);
-            ComponentGenerator.modifyDropdown(settingsMenuId + this.settings[1].id, parent.data, 1);
-            ComponentGenerator.modifyDropdown(settingsMenuId + this.settings[2].id, parent.data, 1);
+            ComponentGenerator.modifyDropdown(parent.plotSettingsMenu.id + this.settings[0].id, parent.data, 1);
+            ComponentGenerator.modifyDropdown(parent.plotSettingsMenu.id + this.settings[1].id, parent.data, 1);
+            ComponentGenerator.modifyDropdown(parent.plotSettingsMenu.id + this.settings[2].id, parent.data, 1);
         });
 
     return plot;

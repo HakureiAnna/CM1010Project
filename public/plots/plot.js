@@ -4,7 +4,7 @@
  * Author: Liu Anna
  **************************************************************/
 
-function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) {    
+function Plot(parent, name, marginSize, settings, dataSeriesTemplate, types, drawPlot, dataSet) {    
     // used to add variations of the plot (types) to the array for dropdown of sub types
     // currently only truly used in xyplot as for the other plot types, no real 'subtype' 
     // has been found to be useful and thus not implemented.
@@ -22,6 +22,7 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
         parent: parent,
         // name of plot
         name: name,
+        marginSize: marginSize,
         // settings for the plot settings menu
         settings: settings,
         // template for data series in data series menu
@@ -29,7 +30,18 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
         // list of subtypes for the plot type
         types: types,
         // function used to perform actual plotting
-        plot: plot,
+        drawPlot: drawPlot,
+        plot: function() {
+            background(255);
+
+            // setup and initialization
+            var settings = this.getSettings(parent.plotSettingsMenu.id);
+            var data = this.getData(parent.dataSeriesMenu.id);
+            var margin = this.computeMargin(marginSize);
+            var rowsNCols = this.computeRowsAndColumns(data.length);
+
+            drawPlot(settings, data, margin, rowsNCols);
+        },
         // function used to repopulate plot settings menu when a new plot type is set
         dataSet: dataSet,
         // get list of selected data series names
@@ -60,7 +72,7 @@ function Plot(parent, name, settings, dataSeriesTemplate, types, plot, dataSet) 
             //var prefix = parent.rowOrColumn=='row'? 'Row ': 'Column ';
             for (var i=2; i<c.childNodes.length; ++i) {
                 var ct = c.childNodes[i].childNodes[1].value;
-                if (i==2) {
+                if (i==4) {
                     ct = this.parent.data.indexOf(ct);
                 } else if (c.childNodes[i].childNodes[1].multiple) {
                     ct = [];
