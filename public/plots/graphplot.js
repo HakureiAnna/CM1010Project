@@ -126,6 +126,7 @@ function GraphPlot(parent) {
 
     var draw = function() {
         background(255);
+        textAlign(LEFT, BASELINE);
         
         // draw edges
         strokeWeight(strokeWidth);

@@ -115,6 +115,7 @@ function DataVisualizer() {
         rowOrColumn: null,
         // currently selected plot
         currentPlot: '',
+        title: '',
         // reference to original template
         setGallery: function(gallery) {
             this.gallery = gallery;
@@ -226,6 +227,18 @@ function DataVisualizer() {
             self.rowOrColumn = rowOrColumn;
             self.withHeaders = withHeaders;
             var header = withHeaders? (rowOrColumn=='row'? 'header':''): '';
+
+            var start = uri.lastIndexOf('/');
+            if (start < 0) {
+                start = uri.lastIndexOf('\\');
+            }
+            if (start < 0) {
+                start = 0;
+            } else {
+                start += 1;
+            }
+            self.title = uri.substring(start, uri.lastIndexOf('.'));
+
             loadTable(uri, header, this.dataLoaded, this.dataLoadError);            
         },
         /*

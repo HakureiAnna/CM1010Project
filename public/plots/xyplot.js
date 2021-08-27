@@ -302,6 +302,8 @@ function XYPlot(parent) {
             yOffset = textAscent(str)/2;
             text(str, margin.left + xOffset, pos + yOffset);
         }
+
+
     };
 
     /*

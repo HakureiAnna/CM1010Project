@@ -5,6 +5,12 @@
  **************************************************************/
 
 function Plot(parent, name, marginSize, settings, dataSeriesTemplate, types, drawPlot, dataSet) {    
+    var titleSpace = 40;
+    var titleTextSize = 20;
+    var legendSpace = 10;
+    var legendWidth = 100;
+    var legendTextSize = 12;
+
     // used to add variations of the plot (types) to the array for dropdown of sub types
     // currently only truly used in xyplot as for the other plot types, no real 'subtype' 
     // has been found to be useful and thus not implemented.
@@ -15,6 +21,47 @@ function Plot(parent, name, marginSize, settings, dataSeriesTemplate, types, dra
                 value: type,
             });
         }
+    };
+
+    var drawTitle = function(margin) {
+        var w = textWidth(parent.title);
+        var x = (margin.right - margin.left - w)/2;
+        textSize(titleTextSize);
+        textAlign(LEFT, TOP);
+        stroke(255);
+        fill(0);
+        text(parent.title, x, plot.marginSize);
+    };
+    
+    var drawLegends = function(data, margin) {
+        var x = margin.right - legendWidth - legendSpace;
+        var y = margin.top + legendSpace;
+        var h = (legendTextSize + legendSpace)* data.length + legendSpace;
+        stroke(0);
+        fill(255);
+        rect(x, y, legendWidth, h);
+        x += legendSpace;
+        y += legendSpace;
+        textSize(legendTextSize);
+        textAlign(LEFT, TOP);
+        console.log(data);
+        var colorId = -1;
+        for (var i=0; i<data[0].length; ++i) {
+            if (data[0][i][0] == '#') {
+                colorId = i;
+                break;
+            }
+        }
+        stroke(255);
+        for (var i=0; i<data.length; ++i) {
+            if (colorId < 0) {
+                fill(0);
+            } else {
+                fill(data[i][colorId]);
+            }
+            text(data[i][0], x, y);
+            y += legendSpace + legendTextSize;
+        } 
     };
     
     var plot = {
@@ -33,14 +80,23 @@ function Plot(parent, name, marginSize, settings, dataSeriesTemplate, types, dra
         drawPlot: drawPlot,
         plot: function() {
             background(255);
+            textAlign(LEFT, BASELINE);
 
             // setup and initialization
             var settings = this.getSettings(parent.plotSettingsMenu.id);
             var data = this.getData(parent.dataSeriesMenu.id);
-            var margin = this.computeMargin(marginSize);
+            var margin = this.computeMargin(marginSize, settings[0]);
             var rowsNCols = this.computeRowsAndColumns(data.length);
 
             drawPlot(settings, data, margin, rowsNCols);
+
+            if (settings[0]) {
+                drawTitle(margin);
+            }
+
+            if (settings[1]) {
+                drawLegends(data, margin);
+            }
         },
         // function used to repopulate plot settings menu when a new plot type is set
         dataSet: dataSet,
@@ -111,11 +167,14 @@ function Plot(parent, name, marginSize, settings, dataSeriesTemplate, types, dra
             return data;
         },
         // compute margin based on current plot windows dimensions
-        computeMargin: function(margin) {
+        computeMargin: function(margin, drawTitle) {
             var left = margin * 2;
             var right = width - margin * 2;
             var bottom = height - margin * 2;
             var top = margin * 2;
+            if (drawTitle) {
+                top += titleSpace;
+            }
     
             return {
                 left: left,
