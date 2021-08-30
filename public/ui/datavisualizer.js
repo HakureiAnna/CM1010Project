@@ -269,7 +269,6 @@ function DataVisualizer() {
             callback on data loading erro
          */
         dataLoadError: function() {
-            console.log('ha');
             self.infoBar.error('Loading data failed. please try another data source.');
         },
         // helper function to get the data from a particular column in the loaded data
