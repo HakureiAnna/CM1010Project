@@ -158,7 +158,7 @@ function Barchart(parent) {
         ],
         // types
         null,
-        // plot
+        // drawPlot
         function(settings, data, margin, rowsNCols) {
             
             // draw the axis

@@ -107,7 +107,7 @@ function XYPlot(parent) {
             plot: function(data, settings, margin, xMaxMin, maxMin) {
                 var minColor = getRGBComponents(getRGBHex(data[2]));
                 var maxColor = getRGBComponents(getRGBHex(data[3]));
-                var alpha = parseInt(data[4]);
+                var alpha = map(parseInt(data[4]), 0, 100, 0, 255);
                 
                 var xData = settings[2];
                 var d = parent.rawData;
@@ -158,7 +158,7 @@ function XYPlot(parent) {
                     label: 'Alpha:',
                     options: {
                         min: 0,
-                        max: 255,
+                        max: 100,
                     },
                 },
             ]
@@ -237,6 +237,8 @@ function XYPlot(parent) {
         var str = '';
         var xOffset = 0;
         var yOffset;
+        fill(0);
+        stroke(0);
         if ((x - xStart)/xMaxMin.unit > tickerThreshold) {
             line(pos, margin.bottom, pos, margin.bottom + tick);
             pos = map(xStart, xMaxMin.min, xMaxMin.max, margin.left, margin.right);

@@ -36,7 +36,7 @@ function setup() {
   dataVisualizer.setup();
 
   // original template setup
-  gallery = new Gallery('StaticMenu', 'Visuals');
+  gallery = new Gallery(dataVisualizer, 'StaticMenu', 'Visuals');
   gallery.addVisual(new TechDiversityRace());
   gallery.addVisual(new TechDiversityGender());
   gallery.addVisual(new PayGapByJob2017());

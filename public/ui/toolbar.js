@@ -6,12 +6,13 @@
  **************************************************************/
 
 function Toolbar(parent, toolbarId) {
+    var fileTypeId = 'ToolbarFileType';
     return {
         // set up function to set up a save button to save a
         // customized plot to a image file.
         setup: function() {
             var toolbar = document.getElementById(toolbarId);
-            var fileTypes = ComponentGenerator.generateDropdown('toolBarFileType', 'File Type:', null, [
+            var fileTypes = ComponentGenerator.generateDropdown(fileTypeId, 'File Type:', null, [
                 {text: '.jpg', value: 'jpg'},
                 {text: '.png', value : 'png'}
             ]);
@@ -30,7 +31,7 @@ function Toolbar(parent, toolbarId) {
                     start = file.lastIndexOf('/');
                 }
                 var path = file.substr(start+1, file.lastIndexOf('.')-start-1);
-                parent.save(path, fileTypes.value);
+                parent.save(path, getDropdownValue(fileTypeId));
             }
         }
     };

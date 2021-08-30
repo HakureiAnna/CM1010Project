@@ -5,11 +5,11 @@
  **************************************************************/
 
 function Plot(parent, name, marginSize, settings, dataSeriesTemplate, types, drawPlot, dataSet) {    
-    var titleSpace = 40;
-    var titleTextSize = 20;
-    var legendSpace = 10;
-    var legendWidth = 100;
-    var legendTextSize = 12;
+    var titleSpace = 40;    // space to reserve for drawing title
+    var titleTextSize = 20; // font size of title
+    var legendSpace = 10;   // spacing between each different data series in legend    
+    var legendWidth = 100;  // width of rectangle for displaying legend
+    var legendTextSize = 12;    // font size of legend text
 
     // used to add variations of the plot (types) to the array for dropdown of sub types
     // currently only truly used in xyplot as for the other plot types, no real 'subtype' 
@@ -23,6 +23,7 @@ function Plot(parent, name, marginSize, settings, dataSeriesTemplate, types, dra
         }
     };
 
+    // function used to draw the title of the graph from the data file name
     var drawTitle = function(margin) {
         var w = textWidth(parent.title);
         var x = (margin.right - margin.left - w)/2;
@@ -33,6 +34,10 @@ function Plot(parent, name, marginSize, settings, dataSeriesTemplate, types, dra
         text(parent.title, x, plot.marginSize);
     };
     
+    // function used to draw legends for each data series. The legend is draw
+    // with one line for each displayed data series, the color is chosen depending
+    // on the first setting found for the data series that represent a color value,
+    // or default to black if no color settings are found
     var drawLegends = function(data, margin) {
         var x = margin.right - legendWidth - legendSpace;
         var y = margin.top + legendSpace;
@@ -44,7 +49,6 @@ function Plot(parent, name, marginSize, settings, dataSeriesTemplate, types, dra
         y += legendSpace;
         textSize(legendTextSize);
         textAlign(LEFT, TOP);
-        console.log(data);
         var colorId = -1;
         for (var i=0; i<data[0].length; ++i) {
             if (data[0][i][0] == '#') {
@@ -78,6 +82,11 @@ function Plot(parent, name, marginSize, settings, dataSeriesTemplate, types, dra
         types: types,
         // function used to perform actual plotting
         drawPlot: drawPlot,
+        // this is the actual plot function called by user to perform
+        // plotting. Previously this was implemented in each concrete
+        // class of plot type but as the code is mostly common and repeated
+        // across the classes, it is moved into the base plot type class
+        // and title, legend features are added to this function
         plot: function() {
             background(255);
             textAlign(LEFT, BASELINE);

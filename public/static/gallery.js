@@ -1,4 +1,4 @@
-function Gallery(menuId, id) {
+function Gallery(parent, menuId, id) {
   id = 'drp' + menuId + id;
   var container = document.getElementById(menuId + 'Container');
 
@@ -18,6 +18,7 @@ function Gallery(menuId, id) {
         self.selectedVisual.addSettings(container);
       }
       self.selectedVisual.draw();
+      parent.infoBar.clear();
     }
   }
   def.value = '';

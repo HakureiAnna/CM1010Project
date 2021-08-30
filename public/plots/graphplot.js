@@ -124,6 +124,11 @@ function GraphPlot(parent) {
 
     };
 
+    // this function is used to draw the graph to the plotting area.
+    // it is invoked every time the selection in 'Nodes to Display' is changed
+    // since graph plot works a little differently from the other plot types
+    // nodes need to be drawn before the shortest path is computed and displayed
+    // when clicking 'Plot' making this function distinct from drawPlot()
     var draw = function() {
         background(255);
         textAlign(LEFT, BASELINE);
